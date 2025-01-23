@@ -3,10 +3,14 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import Navbar from "@/components/Navbar";
 
 export default function HomePage() {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen px-6 bg-[#f7f5f2] text-[#2d2d2d]">
+      <Navbar />
+
+      {/* Hero Section */}
       <section className="w-full max-w-4xl text-center py-20">
         <motion.h1
           className="text-5xl font-bold leading-tight tracking-tight md:text-6xl"
