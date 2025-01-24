@@ -20,7 +20,7 @@ const navItems = [
 
 export default function Navbar() {
   return (
-    <header className="fixed top-0 left-0 w-full bg-[#F7F5F2] text-[#2D2D2D]">
+    <header className="fixed top-0 left-0 w-full text-[#2D2D2D]">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
         {/* Left: Logo & Name */}
         <div className="flex items-center space-x-2">
