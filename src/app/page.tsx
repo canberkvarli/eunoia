@@ -6,71 +6,75 @@ import Navbar from "@/components/Navbar";
 
 export default function HomePage() {
   return (
-    <main className="relative flex flex-col items-center justify-center min-h-screen px-6 text-[#2D2D2D]">
+    <main className="relative flex flex-col items-center justify-center min-h-screen px-6 bg-background text-foreground">
       <Navbar />
 
-      {/* Large Background Circle */}
-      <motion.div
-        className="absolute inset-0 flex items-center justify-center"
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1.4, opacity: 0.2 }}
-        transition={{ duration: 1.5, ease: "easeInOut" }}
-      >
-        <div className="w-[800px] h-[800px] rounded-full bg-gradient-to-br from-[#FFCB47] via-[#FF6666] to-[#66CCFF] opacity-50" />
-      </motion.div>
-
-      {/* Hero Section */}
-      <section className="relative w-full max-w-4xl text-center py-20 mt-10">
-        <motion.h1
-          className="text-5xl font-bold leading-tight tracking-tight md:text-6xl"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          Remember everything. Organize nothing.
-        </motion.h1>
-        <motion.p
-          className="mt-6 text-lg text-gray-600 md:text-xl"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.2 }}
-        >
-          All your{" "}
-          {categories.map((category, index) => (
-            <motion.span
-              key={index}
-              className="mx-1 px-3 py-1 rounded-full border text-sm font-semibold"
-              style={{
-                borderColor: category.color,
-                color: category.color,
-              }}
-              whileHover={{
-                scale: 1.1,
-                boxShadow: `0 0 10px ${category.color}`,
-              }}
-              transition={{ duration: 0.2 }}
-            >
-              {category.label}
-            </motion.span>
-          ))}{" "}
-          in one single, private place.
-        </motion.p>
-
-        {/* Watch the Intro Button */}
+      {/* Large Background Circle as a Decorative Element (Now Lowered) */}
+      <div className="relative flex items-center justify-center min-h-[100vh] mt-20">
+        {/* Gradient Glow Effect */}
         <motion.div
-          className="mt-6"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-        >
-          <button className="px-6 py-3 text-lg font-semibold text-white bg-black rounded-full shadow-md hover:bg-gray-900 transition">
-            Watch the intro
-          </button>
-        </motion.div>
-      </section>
+          className="absolute w-[1200px] h-[1200px] rounded-full bg-gradient-to-br from-deepRed via-softRed to-paleYellow opacity-100 blur-[120px] flex items-center justify-center translate-y-20"
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1.2, opacity: 1 }}
+          transition={{ duration: 1.5, ease: "easeInOut" }}
+        />
+
+        {/* Inner White Circle */}
+        <div className="absolute w-[1000px] h-[1000px] rounded-full bg-lightCream flex items-center justify-center translate-y-20"></div>
+
+        {/* Hero Section (Text is Now Upfront) */}
+        <section className="relative z-10 w-full max-w-10xl text-center py-20 px-10">
+          <motion.h1
+            className="text-20xl font-normal leading-tight tracking-tight md:text-[8rem] max-w-[80rem] mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            Remember everything. Organize nothing.
+          </motion.h1>
+          <motion.p
+            className="mt-6 text-lg text-muted md:text-2xl max-w-[35rem] mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.2 }}
+          >
+            All your{" "}
+            {categories.map((category, index) => (
+              <motion.span
+                key={index}
+                className="mx-1 px-3 py-1 rounded-full border text-sm font-semibold"
+                style={{
+                  borderColor: category.color,
+                  color: category.color,
+                }}
+                whileHover={{
+                  scale: 1.1,
+                  boxShadow: `0 0 10px ${category.color}`,
+                }}
+                transition={{ duration: 0.2 }}
+              >
+                {category.label}
+              </motion.span>
+            ))}{" "}
+            in one single, private place.
+          </motion.p>
+
+          {/* Watch the Intro Button */}
+          <motion.div
+            className="mt-6"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
+            <button className="px-6 py-3 text-lg font-semibold text-white bg-deepRed rounded-full shadow-md hover:bg-opacity-80 transition">
+              Watch the intro
+            </button>
+          </motion.div>
+        </section>
+      </div>
 
       {/* Footer */}
-      <footer className="w-full py-10 text-center text-gray-500">
+      <footer className="w-full py-10 text-center text-muted">
         <p>
           Made with ❤️ by{" "}
           <Link href="https://github.com/canberkvarli" className="underline">
@@ -82,9 +86,9 @@ export default function HomePage() {
   );
 }
 
-/* Category Chips (MyMind.com style) */
+/* Category Chips (Styled with MyMind.com's Palette) */
 const categories = [
-  { label: "notes", color: "#FFCB47" },
+  { label: "notes", color: "#FF8B8B" },
   { label: "bookmarks", color: "#FF6666" },
   { label: "inspiration", color: "#66CCFF" },
   { label: "articles", color: "#66FF99" },
