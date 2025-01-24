@@ -6,21 +6,21 @@ import Navbar from "@/components/Navbar";
 
 export default function HomePage() {
   return (
-    <main className="relative flex flex-col items-center justify-center min-h-screen px-6 bg-background text-foreground">
+    <main className="relative flex flex-col items-center justify-center px-6 text-foreground">
       <Navbar />
 
       {/* Large Background Circle as a Decorative Element (Now Lowered) */}
       <div className="relative flex items-center justify-center min-h-[100vh] mt-20">
         {/* Gradient Glow Effect */}
         <motion.div
-          className="absolute w-[1200px] h-[1200px] rounded-full bg-gradient-to-br from-deepRed via-softRed to-paleYellow opacity-100 blur-[120px] flex items-center justify-center translate-y-20"
+          className="absolute w-[1200px] h-[1200px] rounded-full bg-gradient-to-br from-deepOrange via-softRed to-paleYellow opacity-100 blur-[120px] flex items-center justify-center translate-y-20"
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1.2, opacity: 1 }}
           transition={{ duration: 1.5, ease: "easeInOut" }}
         />
 
         {/* Inner White Circle */}
-        <div className="absolute w-[1000px] h-[1000px] rounded-full bg-lightCream flex items-center justify-center translate-y-20"></div>
+        <div className="absolute w-[1000px] h-[1000px] rounded-full bg-background flex items-center justify-center translate-y-20 "></div>
 
         {/* Hero Section (Text is Now Upfront) */}
         <section className="relative z-10 w-full max-w-10xl text-center py-20 px-10">

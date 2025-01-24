@@ -29,7 +29,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 transition-all duration-500">
+    <header className="fixed top-5 left-0 w-full z-50 transition-all duration-500">
       {/* Main Navbar */}
       <motion.div
         className={`max-w-7xl mx-auto flex items-center justify-between px-6 py-4 transition-all duration-500 ${
@@ -75,7 +75,7 @@ const NavLinks = ({ small = false }: { small?: boolean }) => (
       {navItems.map((item, index) => (
         <NavigationMenuItem key={index}>
           <motion.div
-            className="relative flex items-center space-x-1 text-sm font-medium cursor-pointer"
+            className="relative flex items-center space-x-1 text-xl font-medium cursor-pointer"
             whileHover={{ scale: 1.1 }}
             onClick={() => console.log(`${item.label} clicked`)}
           >

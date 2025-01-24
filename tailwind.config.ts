@@ -13,6 +13,8 @@ export default {
         // Riviera Palette
         softRed: "#FF8B8B",
         deepRed: "#9C2525",
+        deepYellow: "##FDC96B",
+        deepOrange: "#FFB74D",
         lightCream: "#F9F8E6",
         // Swan Dive Palette
         paleYellow: "#F9F7E8",
