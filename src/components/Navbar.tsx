@@ -55,12 +55,9 @@ export default function Navbar() {
   );
 }
 
-/* ✅ Extracted Reusable Components */
-
-/* Logo Component */
 const Logo = ({ size }: { size: number }) => (
   <Image
-    src="/eunoia-logo.svg"
+    src="eunoia-logo.svg"
     alt="Eunoia Logo"
     width={size}
     height={size}

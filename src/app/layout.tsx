@@ -14,7 +14,7 @@ const newsreader = Newsreader({
 });
 
 export const metadata: Metadata = {
-  title: "Eunioa",
+  title: "eunoia",
   description: "mymind's clone",
 };
 
