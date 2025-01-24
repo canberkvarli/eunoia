@@ -47,7 +47,7 @@ export default function Navbar() {
           scrolled ? "opacity-100 scale-100" : "opacity-0 scale-95"
         }`}
       >
-        <Logo size={60} />
+        <Logo size={80} />
         <NavLinks small />
         <AuthButtons size="sm" />
       </motion.div>
@@ -100,9 +100,8 @@ const AuthButtons = ({ size }: { size: "lg" | "sm" }) => (
   <div className={`flex ${size === "lg" ? "space-x-4" : "space-x-3"}`}>
     <Link href="/login">
       <Button
-        variant="outline"
-        className={`border border-black ${
-          size === "lg" ? "rounded-full" : "text-sm rounded-full px-3"
+        className={`shadow-none text-lg ${
+          size === "lg" ? "rounded-full px-6 py-3" : "text-lg rounded-full px-3"
         }`}
       >
         Log in
@@ -111,9 +110,9 @@ const AuthButtons = ({ size }: { size: "lg" | "sm" }) => (
     <Link href="/signup">
       <Button
         variant="default"
-        className={`bg-black text-white ${
+        className={`bg-darkOrange text-white shadow-none text-lg ${
           size === "lg"
-            ? "rounded-full"
+            ? "rounded-full px-6 py-3"
             : "text-sm rounded-full px-3 hover:bg-gray-800"
         }`}
       >

@@ -15,6 +15,7 @@ export default {
         deepRed: "#9C2525",
         deepYellow: "##FDC96B",
         deepOrange: "#FFB74D",
+        darkOrange: "#FF5925",
         lightCream: "#F9F8E6",
         // Swan Dive Palette
         paleYellow: "#F9F7E8",

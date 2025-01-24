@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
+import { Button } from "@/components/ui/button";
 
 export default function HomePage() {
   return (
@@ -66,9 +67,9 @@ export default function HomePage() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            <button className="px-6 py-3 text-lg font-semibold text-white bg-deepRed rounded-full shadow-md hover:bg-opacity-80 transition">
-              Watch the intro
-            </button>
+            <Button className="px-6 py-3 text-lg font-semibold text-white bg-deepRed rounded-full shadow-md hover:bg-opacity-80 transition">
+              Try it out
+            </Button>
           </motion.div>
         </section>
       </div>
