@@ -36,7 +36,7 @@ export default function AuthModal({
             transition={{ duration: 0.3 }}
           >
             {isLoginView ? <LoginForm /> : <SignupForm />}
-            <p className="text-center mt-4 font-light">
+            <div className="text-center mt-4 font-light">
               {isLoginView
                 ? "Don't have an account?"
                 : "Already have an account?"}
@@ -48,7 +48,7 @@ export default function AuthModal({
               >
                 {isLoginView ? "Sign up" : "Log in"}
               </button>
-            </p>
+            </div>
           </motion.div>
         </DialogTitle>
       </DialogContent>
