@@ -10,7 +10,7 @@ const geistMono = Geist_Mono({
 
 const newsreader = Newsreader({
   variable: "--font-newsreader",
-  subsets: ["latin"],
+  subsets: ["latin-ext", "latin"],
   weight: "400",
 });
 
