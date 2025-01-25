@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import LoginForm from "./LoginForm";
-import SignupForm from "./SignupForm";
+import { LoginForm } from "./LoginForm";
+import { SignupForm } from "./SignupForm";
 
 export default function AuthModal({
   isOpen,
