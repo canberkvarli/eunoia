@@ -8,13 +8,14 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String? // Nullable for OAuth users
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  provider  String?
+  id         String   @id @default(uuid())
+  email      String   @unique
+  password   String? // Nullable for OAuth users
+  name       String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  provider   String?
+  providerId String?
 
   sessions Session[]
   accounts Account[]
