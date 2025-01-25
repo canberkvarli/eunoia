@@ -8,21 +8,37 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   email     String   @unique
-  password  String?
+  password  String? // Nullable for OAuth users
+  name      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  provider   AuthProvider? @default(LOCAL)
-  providerId String?
+  sessions Session[]
+  accounts Account[]
 
   @@map("users")
 }
 
-enum AuthProvider {
-  LOCAL
-  GOOGLE
-  APPLE
-  GITHUB
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model Account {
+  id                String @id @default(uuid())
+  userId            String
+  provider          String
+  providerAccountId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("accounts")
 }
