@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import AuthModal from "@/components/auth/AuthModal";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -21,6 +21,8 @@ const navItems = [
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [isLoginView, setIsLoginView] = useState(true); // To toggle login/signup
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -38,7 +40,11 @@ export default function Navbar() {
       >
         <Logo size={100} />
         <NavLinks />
-        <AuthButtons size="lg" />
+        <AuthButtons
+          size="lg"
+          onOpen={setAuthModalOpen}
+          setIsLoginView={setIsLoginView}
+        />
       </motion.div>
 
       {/* Minimal Navbar (After Scroll) */}
@@ -49,12 +55,24 @@ export default function Navbar() {
       >
         <Logo size={80} />
         <NavLinks small />
-        <AuthButtons size="sm" />
+        <AuthButtons
+          size="sm"
+          onOpen={setAuthModalOpen}
+          setIsLoginView={setIsLoginView}
+        />
       </motion.div>
+
+      {/* Authentication Modal */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        isLoginView={isLoginView} // Pass correct modal state
+      />
     </header>
   );
 }
 
+/* Logo Component */
 const Logo = ({ size }: { size: number }) => (
   <Image
     src="eunoia-logo.svg"
@@ -93,28 +111,40 @@ const NavLinks = ({ small = false }: { small?: boolean }) => (
 );
 
 /* Authentication Buttons */
-const AuthButtons = ({ size }: { size: "lg" | "sm" }) => (
+const AuthButtons = ({
+  size,
+  onOpen,
+  setIsLoginView,
+}: {
+  size: "lg" | "sm";
+  onOpen: (open: boolean) => void;
+  setIsLoginView: (isLogin: boolean) => void;
+}) => (
   <div className={`flex ${size === "lg" ? "space-x-4" : "space-x-3"}`}>
-    <Link href="/login">
-      <Button
-        className={`shadow-none text-lg ${
-          size === "lg" ? "rounded-full px-6 py-3" : "text-lg rounded-full px-3"
-        }`}
-      >
-        Log in
-      </Button>
-    </Link>
-    <Link href="/signup">
-      <Button
-        variant="default"
-        className={`bg-darkOrange text-white shadow-none text-lg ${
-          size === "lg"
-            ? "rounded-full px-6 py-3"
-            : "text-sm rounded-full px-3 hover:bg-gray-800"
-        }`}
-      >
-        Sign up
-      </Button>
-    </Link>
+    <Button
+      onClick={() => {
+        setIsLoginView(true);
+        onOpen(true);
+      }}
+      className={`shadow-none text-lg ${
+        size === "lg" ? "rounded-full px-6 py-3" : "text-lg rounded-full px-3"
+      }`}
+    >
+      Log in
+    </Button>
+    <Button
+      onClick={() => {
+        setIsLoginView(false);
+        onOpen(true);
+      }}
+      variant="default"
+      className={`bg-darkOrange text-white shadow-none text-lg ${
+        size === "lg"
+          ? "rounded-full px-6 py-3"
+          : "text-sm rounded-full px-3 hover:bg-gray-800"
+      }`}
+    >
+      Sign up
+    </Button>
   </div>
 );
