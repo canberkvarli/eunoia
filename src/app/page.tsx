@@ -77,7 +77,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="w-full py-10 text-center text-muted">
         <p>
-          Made with ❤️ by{" "}
+          Made with ❤️ by
           <Link href="https://github.com/canberkvarli" className="underline">
             Canberk
           </Link>
