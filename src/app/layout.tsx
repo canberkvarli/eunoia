@@ -1,17 +1,20 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Newsreader } from "next/font/google";
+import SessionProviderWrapper from "@/components/SessionProviderWrapper";
 import "@/styles/globals.css";
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
   subsets: ["latin"],
   weight: "100",
+  variable: "--font-geist-mono",
+  display: "swap",
 });
 
 const newsreader = Newsreader({
-  variable: "--font-newsreader",
   subsets: ["latin-ext", "latin"],
   weight: "400",
+  variable: "--font-newsreader",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -29,7 +32,7 @@ export default function RootLayout({
       <body
         className={`${newsreader.className} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <SessionProviderWrapper>{children}</SessionProviderWrapper>
       </body>
     </html>
   );

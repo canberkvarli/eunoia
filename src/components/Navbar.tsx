@@ -1,16 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import AuthModal from "@/components/auth/AuthModal";
+import Link from "next/link";
 import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuList,
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
+import { useSession, signOut } from "next-auth/react";
+import { usePathname, useSearchParams } from "next/navigation";
+import type { ClientSafeProvider } from "next-auth/react";
+import { Button } from "@/components/ui/button";
 
 const navItems = [
   { label: "What", color: "#ffcc00" },
@@ -19,10 +22,8 @@ const navItems = [
   { label: "What's New", color: "#66ff99" },
 ];
 
-export default function Navbar() {
+export default function Navbar({}: Record<string, ClientSafeProvider>) {
   const [scrolled, setScrolled] = useState(false);
-  const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [isLoginView, setIsLoginView] = useState(true); // To toggle login/signup
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -32,7 +33,6 @@ export default function Navbar() {
 
   return (
     <header className="fixed top-5 left-0 w-full z-50 transition-all duration-500">
-      {/* Main Navbar */}
       <motion.div
         className={`max-w-7xl mx-auto flex items-center justify-between px-6 py-4 transition-all duration-500 ${
           scrolled ? "opacity-0 scale-95" : "opacity-100 scale-100"
@@ -40,14 +40,9 @@ export default function Navbar() {
       >
         <Logo size={100} />
         <NavLinks />
-        <AuthButtons
-          size="lg"
-          onOpen={setAuthModalOpen}
-          setIsLoginView={setIsLoginView}
-        />
+        <AuthButtons size="lg" />
       </motion.div>
 
-      {/* Minimal Navbar (After Scroll) */}
       <motion.div
         className={`fixed top-4 left-1/2 transform -translate-x-1/2 w-[900px] h-[60px] bg-white shadow-lg rounded-full flex items-center justify-between px-6 transition-all duration-500 ${
           scrolled ? "opacity-100 scale-100" : "opacity-0 scale-95"
@@ -55,24 +50,12 @@ export default function Navbar() {
       >
         <Logo size={80} />
         <NavLinks small />
-        <AuthButtons
-          size="sm"
-          onOpen={setAuthModalOpen}
-          setIsLoginView={setIsLoginView}
-        />
+        <AuthButtons size="sm" />
       </motion.div>
-
-      {/* Authentication Modal */}
-      <AuthModal
-        isOpen={authModalOpen}
-        onClose={() => setAuthModalOpen(false)}
-        isLoginView={isLoginView} // Pass correct modal state
-      />
     </header>
   );
 }
 
-/* Logo Component */
 const Logo = ({ size }: { size: number }) => (
   <Image
     src="eunoia-logo.svg"
@@ -83,7 +66,6 @@ const Logo = ({ size }: { size: number }) => (
   />
 );
 
-/* Navigation Links */
 const NavLinks = ({ small = false }: { small?: boolean }) => (
   <NavigationMenu>
     <NavigationMenuList className={`flex ${small ? "space-x-6" : "space-x-8"}`}>
@@ -110,41 +92,77 @@ const NavLinks = ({ small = false }: { small?: boolean }) => (
   </NavigationMenu>
 );
 
-/* Authentication Buttons */
-const AuthButtons = ({
-  size,
-  onOpen,
-  setIsLoginView,
-}: {
-  size: "lg" | "sm";
-  onOpen: (open: boolean) => void;
-  setIsLoginView: (isLogin: boolean) => void;
-}) => (
-  <div className={`flex ${size === "lg" ? "space-x-4" : "space-x-3"}`}>
-    <Button
-      onClick={() => {
-        setIsLoginView(true);
-        onOpen(true);
-      }}
-      className={`shadow-none text-lg ${
-        size === "lg" ? "rounded-full px-6 py-3" : "text-lg rounded-full px-3"
-      }`}
-    >
-      Log in
-    </Button>
-    <Button
-      onClick={() => {
-        setIsLoginView(false);
-        onOpen(true);
-      }}
-      variant="default"
-      className={`bg-darkOrange text-white shadow-none text-lg ${
-        size === "lg"
-          ? "rounded-full px-6 py-3"
-          : "text-sm rounded-full px-3 hover:bg-gray-800"
-      }`}
-    >
-      Sign up
-    </Button>
-  </div>
-);
+const AuthButtons = ({ size }: { size: "lg" | "sm" }) => {
+  const { data: session } = useSession();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const isAuthPage = pathname === "/entering-my-mind";
+  const mode = searchParams.get("mode") || "login";
+
+  if (session) {
+    return (
+      <Button
+        onClick={() => signOut()}
+        className={`shadow-none text-lg ${
+          size === "lg" ? "rounded-full px-6 py-3" : "text-lg rounded-full px-3"
+        }`}
+      >
+        Log out
+      </Button>
+    );
+  }
+
+  if (isAuthPage) {
+    return (
+      <div>
+        {mode === "login" ? (
+          <Link
+            href="/entering-my-mind?mode=signup"
+            className={`bg-darkOrange text-white shadow-none text-lg ${
+              size === "lg"
+                ? "rounded-full px-6 py-3"
+                : "text-sm rounded-full px-3 hover:bg-gray-800"
+            }`}
+          >
+            Sign up
+          </Link>
+        ) : (
+          <Link
+            href="/entering-my-mind?mode=login"
+            className={`shadow-none text-lg ${
+              size === "lg"
+                ? "rounded-full px-6 py-3"
+                : "text-lg rounded-full px-3"
+            }`}
+          >
+            Log in
+          </Link>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className={`flex ${size === "lg" ? "space-x-4" : "space-x-3"}`}>
+      <Link
+        href="/entering-my-mind?mode=login"
+        className={`shadow-none text-lg ${
+          size === "lg" ? "rounded-full px-6 py-3" : "text-lg rounded-full px-3"
+        }`}
+      >
+        Log in
+      </Link>
+      <Link
+        href="/entering-my-mind?mode=signup"
+        className={`bg-darkOrange text-white shadow-none text-lg ${
+          size === "lg"
+            ? "rounded-full px-6 py-3"
+            : "text-sm rounded-full px-3 hover:bg-gray-800"
+        }`}
+      >
+        Sign up
+      </Link>
+    </div>
+  );
+};

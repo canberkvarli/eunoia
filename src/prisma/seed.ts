@@ -8,23 +8,21 @@ async function main() {
 
   const passwordHash1 = await bcrypt.hash("password123", 10);
   const passwordHash2 = await bcrypt.hash("securepass", 10);
+  const passwordHash3 = await bcrypt.hash("123456", 10);
 
   await prisma.user.createMany({
     data: [
       {
         email: "user1@example.com",
         password: passwordHash1,
-        provider: "LOCAL",
       },
       {
         email: "user2@example.com",
         password: passwordHash2,
-        provider: "LOCAL",
       },
       {
-        email: "oauth_user@gmail.com",
-        provider: "GOOGLE",
-        providerId: "google-123456",
+        email: "another@gmail.com",
+        password: passwordHash3,
       },
     ],
   });

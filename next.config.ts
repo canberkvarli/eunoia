@@ -1,7 +1,17 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  async rewrites() {
+    return [
+      {
+        source: "/entering-my-mind",
+        destination: "/auth",
+      },
+    ];
+  },
+  images: {
+    domains: ["static.accelerator.net"],
+  },
 };
 
 export default nextConfig;
