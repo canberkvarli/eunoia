@@ -14,18 +14,18 @@ const MainNavBar: React.FC = () => {
       <div className="flex space-x-6">
         <Link
           href="/everything"
-          className="text-gray-800 dark:text-gray-200 font-bold hover:underline"
+          className="text-gray-800 dark:text-[#748397] font-bold hover:underline"
         >
           Everything
         </Link>
         <Link
           href="/spaces"
-          className="text-gray-500 dark:text-gray-300 hover:underline"
+          className="text-gray-500 dark:text-[#748397] hover:underline"
         >
           Spaces
         </Link>
         <button
-          className="text-gray-500 dark:text-gray-300 hover:underline"
+          className="text-gray-500 dark:text-[#748397] hover:underline"
           onClick={handleSerendipityClick}
         >
           Serendipity

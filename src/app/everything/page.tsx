@@ -3,6 +3,7 @@ import { AuthOptions } from "@/app/api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
 import MainNavBar from "@/components/MainNavBar";
 import SideNavbar from "@/components/SideNavbar";
+import EmptyMind from "@/components/EmptyMind";
 import { ThemeProvider } from "next-themes";
 import { ThemeWrapper } from "@/components/ThemeWrapper";
 
@@ -13,7 +14,7 @@ export default async function EverythingPage() {
   return (
     <ThemeProvider
       attribute="class"
-      defaultTheme="light"
+      defaultTheme="dark"
       enableSystem={false}
       disableTransitionOnChange
       enableColorScheme={false}
@@ -24,7 +25,8 @@ export default async function EverythingPage() {
           <div className="flex-1">
             <MainNavBar />
             <div className="p-4">
-              <p>Welcome, {session.user?.name}</p>
+              {/* Must render conditionnally if user has no cards else render the cards with the search bar*/}
+              <EmptyMind />
             </div>
           </div>
         </div>
