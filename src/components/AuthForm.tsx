@@ -4,9 +4,6 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { ClientSafeProvider, signIn } from "next-auth/react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
 interface AuthFormProps {
@@ -18,7 +15,6 @@ export default function AuthForm({ providers, className }: AuthFormProps) {
   const searchParams = useSearchParams();
   const initialMode = searchParams.get("mode") === "signup" ? false : true;
   const [isLogin, setIsLogin] = useState(initialMode);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const mode = searchParams.get("mode");
@@ -29,66 +25,15 @@ export default function AuthForm({ providers, className }: AuthFormProps) {
     }
   }, [searchParams]);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setErrorMessage(null);
-    const formData = new FormData(event.currentTarget);
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-
-    if (isLogin) {
-      // Login logic
-      const result = await signIn("credentials", {
-        callbackUrl: "/dashboard",
-        email,
-        password,
-      });
-      if (result?.error) {
-        setErrorMessage(result.error);
-      }
-    } else {
-      // Signup logic – replace this with your actual signup implementation
-      try {
-        const res = await fetch("/api/auth/signup", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        });
-        if (!res.ok) {
-          const data = await res.json();
-          throw new Error(data.error || "Signup failed");
-        }
-        // After a successful signup, automatically log in
-        const result = await signIn("credentials", {
-          callbackUrl: "/dashboard",
-          email,
-          password,
-        });
-        if (result?.error) {
-          setErrorMessage(result.error);
-        }
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          setErrorMessage(error.message);
-        } else {
-          setErrorMessage("An unknown error occurred");
-        }
-      }
-    }
-  };
-
   return (
     <div className={cn("flex flex-col gap-6 w-[20rem] mx-auto", className)}>
-      {/* Header Section */}
       <div className="flex flex-col items-center">
-        {/* Logo */}
         <Image
           src="https://static.accelerator.net/134/0.51.2/images/thinker.svg"
           alt="Thinker logo"
           width={55}
           height={55}
         />
-        {/* Header Text */}
         <h2
           className={`text-[4rem] w-[19rem] text-gray-900 text-center font-normal leading-[4rem] ${
             isLogin ? "w-[19rem]" : "w-[25rem]"
@@ -103,14 +48,12 @@ export default function AuthForm({ providers, className }: AuthFormProps) {
         )}
       </div>
 
-      {/* Provider Buttons */}
       <div className="flex flex-col items-center gap-2">
         {providers &&
           Object.values(providers).map((provider) => {
             // Skip the credentials provider since it’s handled via the form
             if (provider.id === "credentials") return null;
 
-            // Adjust the button text based on the current mode.
             const buttonText = isLogin
               ? `Sign in with ${provider.name}`
               : `Sign up with ${provider.name}`;
@@ -164,59 +107,15 @@ export default function AuthForm({ providers, className }: AuthFormProps) {
             return null;
           })}
       </div>
-
-      {/* Separator */}
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-300" />
-        </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-white text-gray-500">or</span>
-        </div>
-      </div>
-
-      {/* Credentials Form */}
-      <form onSubmit={handleSubmit} className="space-y-2">
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="m@example.com"
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <div className="flex items-center">
-            <Label htmlFor="password">Password</Label>
-            {isLogin && (
-              <span className="ml-auto text-sm underline hover:text-gray-700 cursor-pointer">
-                Forgot your password?
-              </span>
-            )}
-          </div>
-          <Input id="password" name="password" type="password" required />
-        </div>
-        {errorMessage && (
-          <p className="text-red-500 text-sm text-center">{errorMessage}</p>
-        )}
-        <Button
-          type="submit"
-          className="w-80 mx-auto shadow-xl rounded-3xl bg-darkOrange hover:bg-orange-600 text-white"
+      <p className="text-gray-600 mt-2 text-center">
+        {isLogin ? "Don't have an account? " : "Already have an account? "}
+        <span
+          onClick={() => setIsLogin(!isLogin)}
+          className="text-darkOrange underline cursor-pointer"
         >
-          {isLogin ? "Login" : "Sign Up"}
-        </Button>
-        <p className="text-gray-600 mt-2 text-center">
-          {isLogin ? "Don't have an account? " : "Already have an account? "}
-          <span
-            onClick={() => setIsLogin(!isLogin)}
-            className="text-darkOrange underline cursor-pointer"
-          >
-            {isLogin ? "Sign up here" : "Log in here"}
-          </span>
-        </p>
-      </form>
+          {isLogin ? "Sign up here" : "Log in here"}
+        </span>
+      </p>
     </div>
   );
 }

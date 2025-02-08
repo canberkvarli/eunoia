@@ -158,7 +158,7 @@ const AuthButtons = ({ size }: { size: "lg" | "sm" }) => {
         className={`bg-darkOrange text-white shadow-none text-lg ${
           size === "lg"
             ? "rounded-full px-6 py-3"
-            : "text-sm rounded-full px-3 hover:bg-gray-800"
+            : "text-md rounded-full px-3 hover:bg-gray-800"
         }`}
       >
         Sign up

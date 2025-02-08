@@ -5,8 +5,6 @@ import { redirect } from "next/navigation";
 export default async function DashboardPage() {
   const session = await getServerSession(AuthOptions);
   return (
-    <div>
-      {session ? <p>Welcome, {session.user?.name}</p> : redirect("/login")}
-    </div>
+    <div>{session ? <p>Welcome, {session.user?.name}</p> : redirect("/")}</div>
   );
 }
