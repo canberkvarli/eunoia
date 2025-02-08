@@ -10,10 +10,9 @@ import {
   NavigationMenuList,
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
-import { useSession, signOut } from "next-auth/react";
 import { usePathname, useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 import type { ClientSafeProvider } from "next-auth/react";
-import { Button } from "@/components/ui/button";
 
 const navItems = [
   { label: "What", color: "#ffcc00" },
@@ -93,76 +92,107 @@ const NavLinks = ({ small = false }: { small?: boolean }) => (
 );
 
 const AuthButtons = ({ size }: { size: "lg" | "sm" }) => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const isAuthPage = pathname === "/entering-my-mind";
-  const mode = searchParams.get("mode") || "login";
+  const [showButtons, setShowButtons] = useState(false);
 
-  if (session) {
+  useEffect(() => {
+    if (status !== "loading") {
+      const timer = setTimeout(() => {
+        setShowButtons(true);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [status]);
+
+  if (status === "loading" || !showButtons) {
     return (
-      <Button
-        onClick={() => signOut()}
-        className={`shadow-none text-lg ${
-          size === "lg" ? "rounded-full px-6 py-3" : "text-lg rounded-full px-3"
-        }`}
-      >
-        Log out
-      </Button>
+      <div
+        style={{
+          width: size === "lg" ? "150px" : "100px",
+          height: size === "lg" ? "50px" : "30px",
+        }}
+      />
     );
   }
 
-  if (isAuthPage) {
-    return (
-      <div>
-        {mode === "login" ? (
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      {session ? (
+        <div>
           <Link
-            href="/entering-my-mind?mode=signup"
+            href="/everything"
             className={`bg-darkOrange text-white shadow-none text-lg ${
               size === "lg"
                 ? "rounded-full px-6 py-3"
                 : "text-sm rounded-full px-3 hover:bg-gray-800"
             }`}
           >
-            Sign up
+            My Mind
           </Link>
-        ) : (
-          <Link
-            href="/entering-my-mind?mode=login"
-            className={`shadow-none text-lg ${
-              size === "lg"
-                ? "rounded-full px-6 py-3"
-                : "text-lg rounded-full px-3"
-            }`}
-          >
-            Log in
-          </Link>
-        )}
-      </div>
-    );
-  }
-
-  return (
-    <div className={`flex ${size === "lg" ? "space-x-4" : "space-x-3"}`}>
-      <Link
-        href="/entering-my-mind?mode=login"
-        className={`shadow-none text-lg ${
-          size === "lg" ? "rounded-full px-6 py-3" : "text-lg rounded-full px-3"
-        }`}
-      >
-        Log in
-      </Link>
-      <Link
-        href="/entering-my-mind?mode=signup"
-        className={`bg-darkOrange text-white shadow-none text-lg ${
-          size === "lg"
-            ? "rounded-full px-6 py-3"
-            : "text-md rounded-full px-3 hover:bg-gray-800"
-        }`}
-      >
-        Sign up
-      </Link>
-    </div>
+        </div>
+      ) : (
+        <>
+          {pathname === "/entering-my-mind" ? (
+            <div>
+              {searchParams.get("mode") === "login" ? (
+                <Link
+                  href="/entering-my-mind?mode=signup"
+                  className={`bg-darkOrange text-white shadow-none text-lg ${
+                    size === "lg"
+                      ? "rounded-full px-6 py-3"
+                      : "text-sm rounded-full px-3 hover:bg-gray-800"
+                  }`}
+                >
+                  Sign up
+                </Link>
+              ) : (
+                <Link
+                  href="/entering-my-mind?mode=login"
+                  className={`shadow-none text-lg ${
+                    size === "lg"
+                      ? "rounded-full px-6 py-3"
+                      : "text-lg rounded-full px-3"
+                  }`}
+                >
+                  Log in
+                </Link>
+              )}
+            </div>
+          ) : (
+            <div
+              className={`flex ${size === "lg" ? "space-x-4" : "space-x-3"}`}
+            >
+              <Link
+                href="/entering-my-mind?mode=login"
+                className={`shadow-none text-lg ${
+                  size === "lg"
+                    ? "rounded-full px-6 py-3"
+                    : "text-lg rounded-full px-3"
+                }`}
+              >
+                Log in
+              </Link>
+              <Link
+                href="/entering-my-mind?mode=signup"
+                className={`bg-darkOrange text-white shadow-none text-lg ${
+                  size === "lg"
+                    ? "rounded-full px-6 py-3"
+                    : "text-md rounded-full px-3 hover:bg-gray-800"
+                }`}
+              >
+                Sign up
+              </Link>
+            </div>
+          )}
+        </>
+      )}
+    </motion.div>
   );
 };

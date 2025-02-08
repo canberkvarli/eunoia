@@ -51,9 +51,6 @@ export default function AuthForm({ providers, className }: AuthFormProps) {
       <div className="flex flex-col items-center gap-2">
         {providers &&
           Object.values(providers).map((provider) => {
-            // Skip the credentials provider since it’s handled via the form
-            if (provider.id === "credentials") return null;
-
             const buttonText = isLogin
               ? `Sign in with ${provider.name}`
               : `Sign up with ${provider.name}`;
@@ -68,7 +65,7 @@ export default function AuthForm({ providers, className }: AuthFormProps) {
                   onClick={() =>
                     signIn(provider.id, {
                       redirect: true,
-                      callbackUrl: "/dashboard",
+                      callbackUrl: "/everything",
                     })
                   }
                   className={`${baseStyles} bg-darkOrange text-white hover:bg-orange-600`}
@@ -89,7 +86,7 @@ export default function AuthForm({ providers, className }: AuthFormProps) {
                   onClick={() =>
                     signIn(provider.id, {
                       redirect: true,
-                      callbackUrl: "/dashboard",
+                      callbackUrl: "/everything",
                     })
                   }
                   className={`${baseStyles} bg-gray-800 text-white hover:bg-gray-900`}
