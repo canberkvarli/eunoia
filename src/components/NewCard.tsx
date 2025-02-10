@@ -3,11 +3,14 @@
 import { useState, useRef } from "react";
 import { createCard } from "@/actions/cardActions";
 import { motion, AnimatePresence } from "framer-motion";
+import { LoaderCircle } from "lucide-react";
 
 const NewCard = ({ userId }: { userId: string }) => {
   const [content, setContent] = useState("");
   const [focused, setFocused] = useState(false);
+  const [hideLabel, setHideLabel] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
@@ -16,10 +19,19 @@ const NewCard = ({ userId }: { userId: string }) => {
     }
   };
 
+  const handleCardClick = () => {
+    textareaRef.current?.focus();
+  };
+
+  const handleScroll = (e: React.UIEvent<HTMLTextAreaElement>) => {
+    const scrollTop = e.currentTarget.scrollTop;
+    setHideLabel(scrollTop > 0);
+  };
+
   return (
     <form
       ref={formRef}
-      action={createCard} // server action invoked on submission
+      action={createCard}
       className="rounded-lg shadow w-full max-w-xl mx-auto font-sans transition-all duration-300"
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
@@ -28,35 +40,31 @@ const NewCard = ({ userId }: { userId: string }) => {
       <input type="hidden" name="title" value="New Note" />
       <input type="hidden" name="tags" value="" />
 
-      <div
-        className={`rounded-lg transition-colors duration-300
-          ${"bg-lightCard"} dark:bg-darkCard`}
-        style={{
-          backgroundColor: focused ? undefined : undefined,
-        }}
-      >
-        {/* Header / Label */}
-        <div className="px-2 pt-2">
-          <span className="text-sm" style={{ color: "#FF5925" }}>
-            ADD A NEW NOTE
-          </span>
+      <div className="relative group" onClick={handleCardClick}>
+        <div className="rounded-lg transition-colors duration-300 bg-lightCard dark:bg-darkCard">
+          <div className="px-2 pb-2 overflow-auto">
+            <textarea
+              ref={textareaRef}
+              name="body"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              onKeyDown={handleKeyDown}
+              onScroll={handleScroll}
+              className="w-full px-4 pb-10 rounded focus:outline-none resize-none bg-[##FFFFFF] dark:bg-[#1D1F28] text-black dark:text-[#A6B4C6] pt-12 relative z-0"
+              style={{ minHeight: "200px" }}
+              onFocus={() => setFocused(true)}
+              onBlur={() => setFocused(false)}
+            />
+          </div>
         </div>
 
-        {/* Editor area */}
-        <div className="px-2 pb-2">
-          <textarea
-            name="body"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Start typing here…"
-            className="w-full rounded focus:outline-none resize-none 
-              bg-[##FFFFFF] dark:bg-[#1D1F28] text-black dark:text-[#A6B4C6]"
-            style={{ minHeight: "200px" }}
-            onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
-          />
-        </div>
+        {!hideLabel && (
+          <div className="absolute top-2 left-6 pointer-events-none z-30">
+            <span className="text-sm" style={{ color: "#FF5925" }}>
+              ADD A NEW NOTE
+            </span>
+          </div>
+        )}
 
         <AnimatePresence>
           {content.trim().length > 0 && (
@@ -65,11 +73,12 @@ const NewCard = ({ userId }: { userId: string }) => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 5 }}
               transition={{ duration: 0.2 }}
-              className="px-2 pb-2"
+              className="absolute inset-x-0 bottom-2 px-2 pb-2"
             >
               <button
                 type="submit"
-                className="w-full py-2 rounded text-sm font-bold transition"
+                onClick={(e) => e.stopPropagation()}
+                className="w-full py-1 rounded text-sm font-bold transition"
                 style={{ backgroundColor: "#FF5925", color: "#fff" }}
               >
                 PRESS ⌘+ENTER TO SAVE
@@ -77,6 +86,15 @@ const NewCard = ({ userId }: { userId: string }) => {
             </motion.div>
           )}
         </AnimatePresence>
+
+        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition duration-200 z-30">
+          <div
+            data-tooltip-target="tooltip-default"
+            className="relative inline-block"
+          >
+            <LoaderCircle className="h-6 w-6 text-orange-500 hover:animate-spin hover:opacity-50 cursor-pointer" />
+          </div>
+        </div>
       </div>
     </form>
   );
