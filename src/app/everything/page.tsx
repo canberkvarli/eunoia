@@ -8,6 +8,7 @@ import { ThemeProvider } from "next-themes";
 import { ThemeWrapper } from "@/components/ThemeWrapper";
 import { getAllCards } from "@/actions/cardActions";
 import CardsContainer from "@/components/CardsContainer";
+import SearchMyMind from "@/components/SearchMyMind";
 
 export default async function EverythingPage() {
   const session = await getServerSession(AuthOptions);
@@ -32,7 +33,10 @@ export default async function EverythingPage() {
             <MainNavBar />
             <div className="p-4">
               {cards && cards.length > 0 ? (
-                <CardsContainer cards={cards} userId={userId} />
+                <div className="p-4">
+                  <SearchMyMind />
+                  <CardsContainer cards={cards} userId={userId} />
+                </div>
               ) : (
                 <EmptyMind />
               )}

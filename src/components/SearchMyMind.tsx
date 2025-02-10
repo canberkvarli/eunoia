@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-
 const SearchMyMind: React.FC = () => {
   return (
     <div className="max-w-screen-lg">
@@ -11,7 +9,7 @@ const SearchMyMind: React.FC = () => {
           placeholder="Search My Mind..."
           autoCapitalize="none"
           autoFocus
-          className="flex-1 text-[4rem] dark:text-[#748397] bg-transparent outline-none italic"
+          className="flex-1 text-[4rem] text-black dark:text-[#A6B4C6] bg-transparent outline-none italic"
         />
       </div>
     </div>
