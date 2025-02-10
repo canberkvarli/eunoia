@@ -40,7 +40,21 @@ const NewCard = ({ userId }: { userId: string }) => {
       <input type="hidden" name="title" value="New Note" />
       <input type="hidden" name="tags" value="" />
 
-      <div className="relative group" onClick={handleCardClick}>
+      {focused && (
+        <motion.div
+          initial={{ opacity: 0, backgroundSize: "150%" }}
+          animate={{ opacity: 1, backgroundSize: "100%" }}
+          exit={{ opacity: 0, backgroundSize: "150%" }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          className="fixed inset-0 z-10"
+          style={{
+            background:
+              "radial-gradient(circle, transparent 50%, rgba(0, 0, 0, 0.8) 100%)",
+          }}
+        />
+      )}
+
+      <div className="relative z-20 group" onClick={handleCardClick}>
         <div className="rounded-lg transition-colors duration-300 bg-lightCard dark:bg-darkCard">
           <div className="px-2 pb-2 overflow-auto">
             <textarea
@@ -88,10 +102,7 @@ const NewCard = ({ userId }: { userId: string }) => {
         </AnimatePresence>
 
         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition duration-200 z-30">
-          <div
-            data-tooltip-target="tooltip-default"
-            className="relative inline-block"
-          >
+          <div className="relative inline-block">
             <LoaderCircle className="h-6 w-6 text-orange-500 hover:animate-spin hover:opacity-50 cursor-pointer" />
           </div>
         </div>
