@@ -6,10 +6,16 @@ import SideNavbar from "@/components/SideNavbar";
 import EmptyMind from "@/components/EmptyMind";
 import { ThemeProvider } from "next-themes";
 import { ThemeWrapper } from "@/components/ThemeWrapper";
+import { getAllCards } from "@/actions/cardActions";
+import CardsContainer from "@/components/CardsContainer";
 
 export default async function EverythingPage() {
   const session = await getServerSession(AuthOptions);
-  if (!session) redirect("/");
+  if (!session) {
+    redirect("/");
+  }
+  const userId = (session?.user as { id: string }).id;
+  const cards = await getAllCards(userId);
 
   return (
     <ThemeProvider
@@ -25,8 +31,11 @@ export default async function EverythingPage() {
           <div className="flex-1">
             <MainNavBar />
             <div className="p-4">
-              {/* Must render conditionnally if user has no cards else render the cards with the search bar*/}
-              <EmptyMind />
+              {cards && cards.length > 0 ? (
+                <CardsContainer cards={cards} userId={userId} />
+              ) : (
+                <EmptyMind />
+              )}
             </div>
           </div>
         </div>
