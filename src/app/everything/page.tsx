@@ -34,7 +34,7 @@ export default async function EverythingPage() {
               {cards && cards.length > 0 ? (
                 <MyMind userId={userId} initialCards={cards} />
               ) : (
-                <EmptyMind />
+                <EmptyMind userId={userId} />
               )}
             </div>
           </div>

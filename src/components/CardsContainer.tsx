@@ -36,7 +36,7 @@ const CardsContainer: React.FC<CardsContainerProps> = ({ cards, userId }) => {
                 style={{ minHeight: "auto" }}
               >
                 <h3 className="text-xl text-black dark:text-[#A6B4C6] font-bold mb-2">
-                  {card.title || "Untitled"}
+                  {card.title}
                 </h3>
                 <p className="text-black text-sm dark:text-[#A6B4C6]">
                   {card.body}
@@ -53,9 +53,6 @@ const CardsContainer: React.FC<CardsContainerProps> = ({ cards, userId }) => {
                     ))}
                   </div>
                 )}
-                <div className="mt-2 text-xs text-black dark:text-[#A6B4C6]">
-                  {card.createdAt.toLocaleString()}
-                </div>
               </div>
             </Link>
           </motion.div>

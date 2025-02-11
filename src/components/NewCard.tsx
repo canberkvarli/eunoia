@@ -38,7 +38,7 @@ const NewCard = ({ userId }: { userId: string }) => {
       onBlur={() => setFocused(false)}
     >
       <input type="hidden" name="userId" value={userId} />
-      <input type="hidden" name="title" value="New Note" />
+      <input type="hidden" name="title" />
       <input type="hidden" name="tags" value="" />
 
       {focused && (
