@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { createCard } from "@/actions/cardActions";
 import { motion, AnimatePresence } from "framer-motion";
-import { LoaderCircle } from "lucide-react";
+import { LoaderPinwheel } from "lucide-react";
 
 const NewCard = ({ userId }: { userId: string }) => {
   const [content, setContent] = useState("");
@@ -32,7 +32,8 @@ const NewCard = ({ userId }: { userId: string }) => {
     <form
       ref={formRef}
       action={createCard}
-      className="rounded-lg shadow w-full max-w-xl mx-auto font-sans transition-all duration-300"
+      onSubmit={() => setContent("")}
+      className="rounded-lg w-full max-w-xl mx-auto font-sans transition-all duration-300"
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
     >
@@ -54,7 +55,7 @@ const NewCard = ({ userId }: { userId: string }) => {
         />
       )}
 
-      <div className="relative z-20 group" onClick={handleCardClick}>
+      <div className="relative z-20" onClick={handleCardClick}>
         <div className="rounded-lg transition-colors duration-300 bg-lightCard dark:bg-darkCard">
           <div className="px-2 pb-2 overflow-auto">
             <textarea
@@ -80,6 +81,7 @@ const NewCard = ({ userId }: { userId: string }) => {
           </div>
         )}
 
+        {/*  button overlay */}
         <AnimatePresence>
           {content.trim().length > 0 && (
             <motion.div
@@ -101,9 +103,12 @@ const NewCard = ({ userId }: { userId: string }) => {
           )}
         </AnimatePresence>
 
-        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition duration-200 z-30">
-          <div className="relative inline-block">
-            <LoaderCircle className="h-6 w-6 text-orange-500 hover:animate-spin hover:opacity-50 cursor-pointer" />
+        <div className="absolute top-2 right-2 z-30">
+          <div className="group relative inline-block">
+            <LoaderPinwheel className="h-6 w-6 text-orange-500 hover:animate-spin hover:opacity-90 cursor-pointer" />
+            <span className="absolute -bottom-full bottom-6 right-0 hidden group-hover:block bg-gray-800 dark:bg-gray-200 text-white dark:text-black text-xs px-2 py-1 rounded">
+              Focus CMD+F
+            </span>
           </div>
         </div>
       </div>
