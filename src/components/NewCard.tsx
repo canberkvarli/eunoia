@@ -57,7 +57,7 @@ const NewCard = ({ userId }: { userId: string }) => {
 
       <div className="relative z-20" onClick={handleCardClick}>
         <div className="rounded-lg transition-colors duration-300 bg-lightCard dark:bg-darkCard">
-          <div className="px-2 pb-2 overflow-auto">
+          <div className="pb-2 overflow-auto">
             <textarea
               ref={textareaRef}
               name="body"

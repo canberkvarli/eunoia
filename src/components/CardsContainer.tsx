@@ -21,7 +21,9 @@ const CardsContainer: React.FC<CardsContainerProps> = ({ cards, userId }) => {
   return (
     <div
       className="grid gap-6 font-sans"
-      style={{ gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))" }}
+      style={{
+        gridTemplateColumns: "250px repeat(auto-fit, minmax(250px, 300px))",
+      }}
     >
       <NewCard userId={userId} />
 
