@@ -28,30 +28,49 @@ export async function createCard(formData: FormData): Promise<void> {
   revalidatePath("/everything");
 }
 
-// Delete a card by its ID
 export async function deleteCard(cardId: string) {
   const card = await prisma.card.delete({
     where: { id: cardId },
   });
+  revalidatePath("/everything");
   return card;
 }
 
-// Update a card by its ID
-export async function updateCard(
-  cardId: string,
-  data: { title?: string; body?: string; tags?: string[] }
-) {
+export async function updateCard(formData: FormData) {
+  const cardId = formData.get("cardId") as string;
+  const title = formData.get("title") as string;
+  const body = formData.get("body") as string;
+  const tags = formData.get("tags") as string;
+
+  const tagsArray =
+    tags && tags.trim() !== "" ? tags.split(",").map((t) => t.trim()) : [];
+
+  const data: { title?: string; body?: string; tags?: string[] } = {};
+
+  if (title !== undefined) data.title = title;
+  if (body !== undefined) data.body = body;
+  if (tags !== undefined) data.tags = tagsArray;
+
   const card = await prisma.card.update({
     where: { id: cardId },
     data,
   });
+  revalidatePath("/everything");
   return card;
 }
 
-// Get a single card by its ID (if needed)
-export async function getCard(cardId: string) {
-  const card = await prisma.card.findUnique({
-    where: { id: cardId },
+export async function getCard({
+  cardId,
+  userId,
+}: {
+  cardId: string;
+  userId: string;
+}) {
+  const card = await prisma.card.findFirst({
+    where: {
+      id: cardId,
+      userId,
+    },
   });
   return card;
 }

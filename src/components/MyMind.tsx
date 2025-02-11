@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import SearchMyMind from "@/components/SearchMyMind";
+
 export interface Card {
   id: string;
   title?: string | null;
