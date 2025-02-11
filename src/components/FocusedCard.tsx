@@ -37,7 +37,7 @@ const FocusedCardModal: React.FC<FocusedCardModalProps> = ({
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-b from-[#424751] to-[#0A0C0F] dark:bg-gradient-to-b dark:from-[#062E45] dark:via-[#702736] dark:to-[#562F2F]"
         initial="hidden"
         animate="visible"
         exit="exit"
@@ -46,48 +46,44 @@ const FocusedCardModal: React.FC<FocusedCardModalProps> = ({
         <form
           ref={formRef}
           action={createCard}
-          className="relative w-full h-full bg-transparent flex flex-col"
+          className="relative w-full h-full flex flex-col bg-transparent"
         >
-          {/* Hidden inputs */}
           <input type="hidden" name="userId" value={userId} />
           <input type="hidden" name="tags" value="" />
 
-          {/* Close button (top-right) */}
           <button
             type="button"
             onClick={onClose}
             className="absolute top-4 right-4 text-white"
             aria-label="Close modal"
           >
-            <ArrowDownRight className="w-8 h-8 rotate-45" />
+            <ArrowDownRight className="w-8 h-8 rotate-90" />
           </button>
 
-          {/* Title input */}
-          <div className="p-4">
-            <input
-              ref={titleRef}
-              type="text"
-              name="title"
-              placeholder="Type your headline here."
-              className="w-full text-4xl bg-transparent border-b border-gray-300 focus:outline-none text-white placeholder-gray-400"
-            />
+          <div className="max-w-4xl mx-auto flex-1 flex flex-col justify-center">
+            <div className="px-4 mb-4">
+              <input
+                ref={titleRef}
+                type="text"
+                name="title"
+                placeholder="Type your headline here."
+                className="w-full text-[4rem] bg-transparent focus:outline-none text-left text-white/70 placeholder:text-white/70 dark:placeholder:text-white/70 dark:text-white/70 px-4"
+              />
+            </div>
+
+            <div className="px-4">
+              <textarea
+                name="body"
+                placeholder="Start writing right here..."
+                className="w-full h-80 bg-transparent text-xl focus:outline-none text-left placeholder:text-white/70 dark:placeholder:text-white/70 text-white/70 dark:text-[#A5B4C6] resize-none px-4"
+              ></textarea>
+            </div>
           </div>
 
-          {/* Body textarea */}
-          <div className="flex-1 p-4">
-            <textarea
-              name="body"
-              autoFocus
-              placeholder="Start writing right here..."
-              className="w-full h-full bg-transparent text-xl focus:outline-none text-white placeholder-gray-400 resize-none"
-            ></textarea>
-          </div>
-
-          {/* Save button */}
-          <div className="p-4 flex justify-end">
+          <div className="absolute bottom-4 right-4">
             <button
               type="submit"
-              className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+              className="px-6 py-2 text-white rounded-3xl bg-gray-500 hover:bg-gray-600 transition"
             >
               SAVE (⌘+ENTER)
             </button>

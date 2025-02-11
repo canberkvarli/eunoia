@@ -9,7 +9,7 @@ export async function createCard(formData: FormData): Promise<void> {
   const body = formData.get("body") as string | null;
   const tags = formData.get("tags") as string | null;
 
-  if (!userId || !body) {
+  if (!userId) {
     throw new Error("Missing required form data");
   }
 
@@ -20,7 +20,7 @@ export async function createCard(formData: FormData): Promise<void> {
     data: {
       userId,
       title: title ?? "",
-      body,
+      body: body ?? "",
       tags: tagsArray,
     },
   });
