@@ -72,7 +72,6 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
     autoResize();
   }, [title, body, tags]);
 
-  // Handle delete with a loading overlay.
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
@@ -93,6 +92,7 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Backdrop: clicking outside closes the modal */}
       <div
         className="absolute inset-0 bg-black opacity-50"
         onClick={() => {
@@ -104,7 +104,7 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
-        className="relative bg-white dark:bg-gray-800 rounded-lg shadow-lg w-[95%] h-[95%] overflow-hidden font-sans"
+        className="relative bg-white dark:bg-[#0A0C0F] rounded-lg shadow-lg w-[95%] h-[95%] overflow-hidden font-sans"
       >
         <div className="flex h-full">
           <div className="w-3/4 p-4 flex items-center justify-center">
@@ -117,11 +117,11 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
               }
               placeholder="Start writing..."
               autoFocus
-              className="w-full bg-transparent focus:outline-none resize-none text-left text-xl dark:text-gray-200 pl-5"
+              className="w-full bg-transparent focus:outline-none resize-none text-left text-xl dark:text-[#A6B4C6] pl-5"
               style={{ overflow: "hidden" }}
             />
           </div>
-          <div className="w-1/4 bg-[#F0F2F5] p-4 flex flex-col justify-between">
+          <div className="w-1/4 bg-[#F0F2F5] dark:bg-[#505154] p-4 rounded-lg flex flex-col justify-between">
             <header>
               <input
                 type="text"
@@ -130,9 +130,9 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Title goes here"
                 maxLength={100}
-                className="w-full bg-transparent focus:outline-none text-3xl dark:text-gray-800"
+                className="w-full bg-transparent focus:outline-none text-3xl dark:text-[#A6B4C6]"
               />
-              <div className="line mt-1 text-sm text-gray-600 dark:text-gray-500 relative group">
+              <div className="line mt-1 text-sm text-gray-600 dark:text-[#A6B4C6] relative group">
                 <time dateTime={updatedDate.toISOString()}>{relativeTime}</time>
                 <span className="absolute hidden group-hover:block bg-gray-700 text-white text-xs p-1 rounded mt-1">
                   {formattedTime}
@@ -146,18 +146,23 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
                 value={tags}
                 onChange={(e) => setTags(e.target.value)}
                 placeholder="Add tags, separated by commas"
-                className="w-full bg-transparent focus:outline-none text-sm dark:text-gray-800"
+                className="w-full bg-transparent focus:outline-none text-sm dark:text-[#A6B4C6]"
               />
             </div>
             <div className="flex justify-center mt-8">
-              <button
-                type="button"
-                onClick={handleDelete}
-                className="p-3 bg-gray-200 dark:bg-gray-700 rounded-full hover:bg-red-500 transition"
-                aria-label="Delete card"
-              >
-                <Trash2 className="h-6 w-6 text-gray-700 dark:text-gray-200" />
-              </button>
+              <div className="relative group">
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  className="p-3 bg-gray-200 dark:bg-gray-700 rounded-full transition transform hover:scale-110 hover:bg-red-500"
+                  aria-label="Delete card"
+                >
+                  <Trash2 className="h-6 w-6 text-gray-700 dark:text-[#A6B4C6]" />
+                </button>
+                <span className="absolute w-20 bottom-full left-1/2 -translate-x-1/2 mb-2 bg-gray-800 text-white text-xs p-1 rounded opacity-0 group-hover:opacity-100 transition pl-2">
+                  Delete card
+                </span>
+              </div>
             </div>
           </div>
         </div>
