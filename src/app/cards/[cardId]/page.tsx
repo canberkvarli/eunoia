@@ -7,8 +7,7 @@ interface PageProps {
 }
 
 export default async function CardDetailPage({ params }: PageProps) {
-  const userId = params.userId;
-  const card = await getCard({ cardId: params.cardId, userId });
+  const card = await getCard({ cardId: params.cardId, userId: params.userId });
   if (!card) {
     notFound();
   }

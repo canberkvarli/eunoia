@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { X, Trash2 } from "lucide-react";
+import { useState, useRef, useEffect, ChangeEvent } from "react";
+import { Trash2, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { updateCard, deleteCard } from "@/actions/cardActions";
 import { useRouter } from "next/navigation";
@@ -12,10 +12,25 @@ export interface Card {
   body: string;
   tags: string[];
   createdAt: Date;
+  updatedAt?: Date;
 }
 
 interface CardDetailModalProps {
   card: Card;
+}
+
+function getRelativeTime(date: Date): string {
+  const now = new Date();
+  const diff = date.getTime() - now.getTime();
+  const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+  const seconds = diff / 1000;
+  if (Math.abs(seconds) < 60) return rtf.format(Math.round(seconds), "second");
+  const minutes = seconds / 60;
+  if (Math.abs(minutes) < 60) return rtf.format(Math.round(minutes), "minute");
+  const hours = minutes / 60;
+  if (Math.abs(hours) < 24) return rtf.format(Math.round(hours), "hour");
+  const days = hours / 24;
+  return rtf.format(Math.round(days), "day");
 }
 
 const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
@@ -23,125 +38,135 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
   const [title, setTitle] = useState(card.title || "");
   const [body, setBody] = useState(card.body);
   const [tags, setTags] = useState(card.tags.join(", "));
+  const [isDeleting, setIsDeleting] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleDelete = () => {
-    if (confirm("Are you sure you want to delete this card?")) {
-      router.back();
-      deleteCard(card.id)
-        .then(() => router.refresh())
-        .catch((err) => console.error("Delete error:", err));
+  const autoResize = () => {
+    const ta = textareaRef.current;
+    if (ta) {
+      ta.style.height = "auto";
+      ta.style.height = ta.scrollHeight + "px";
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    router.back();
-    updateCard(new FormData(e.currentTarget))
-      .then(() => router.refresh())
-      .catch((err) => console.error("Update error:", err));
+  useEffect(() => {
+    textareaRef.current?.focus();
+    autoResize();
+  }, []);
+
+  useEffect(() => {
+    const saveChanges = async () => {
+      try {
+        const formData = new FormData();
+        formData.set("cardId", card.id);
+        formData.set("title", title);
+        formData.set("body", body);
+        formData.set("tags", tags);
+        await updateCard(formData);
+        router.refresh();
+      } catch (err) {
+        console.error("Autosave error:", err);
+      }
+    };
+    saveChanges();
+    autoResize();
+  }, [title, body, tags]);
+
+  // Handle delete with a loading overlay.
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await deleteCard(card.id);
+      router.refresh();
+      router.back();
+    } catch (err) {
+      console.error("Delete error:", err);
+      setIsDeleting(false);
+    }
   };
+
+  const updatedDate = card.updatedAt
+    ? new Date(card.updatedAt)
+    : new Date(card.createdAt);
+  const relativeTime = getRelativeTime(updatedDate);
+  const formattedTime = updatedDate.toLocaleString();
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div
         className="absolute inset-0 bg-black opacity-50"
-        onClick={() => router.back()}
+        onClick={() => {
+          if (!isDeleting) router.back();
+        }}
       />
-
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        transition={{ duration: 0.5 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
         className="relative bg-white dark:bg-gray-800 rounded-lg shadow-lg w-[95%] h-[95%] overflow-hidden font-sans"
       >
-        <button
-          className="absolute top-2 right-2 z-50 p-1"
-          onClick={() => router.back()}
-          aria-label="Close"
-        >
-          <X className="h-6 w-6 text-gray-700 dark:text-gray-200" />
-        </button>
-
-        {/* Update form spanning both columns */}
-        <form onSubmit={handleSubmit} className="flex h-full">
-          {/* Hidden card ID */}
-          <input type="hidden" name="cardId" value={card.id} />
-
-          {/* Left column: Editable Body */}
-          <div className="w-3/4 p-4 border-r border-gray-300 dark:border-gray-700">
-            <label
-              htmlFor="body"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >
-              Body
-            </label>
+        <div className="flex h-full">
+          <div className="w-3/4 p-4 flex items-center justify-center">
             <textarea
-              id="body"
+              ref={textareaRef}
               name="body"
               value={body}
-              onChange={(e) => setBody(e.target.value)}
-              className="w-full h-full p-2 border rounded-md resize-none bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+              onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+                setBody(e.target.value)
+              }
+              placeholder="Start writing..."
+              autoFocus
+              className="w-full bg-transparent focus:outline-none resize-none text-left text-xl dark:text-gray-200 pl-5"
+              style={{ overflow: "hidden" }}
             />
           </div>
-
-          {/* Right column: Title, Tags, and Buttons */}
-          <div className="w-1/4 p-4 flex flex-col justify-between">
-            <div className="space-y-4">
-              <div>
-                <label
-                  htmlFor="title"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Title
-                </label>
-                <input
-                  id="title"
-                  name="title"
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 shadow-sm p-2"
-                />
+          <div className="w-1/4 bg-[#F0F2F5] p-4 flex flex-col justify-between">
+            <header>
+              <input
+                type="text"
+                name="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Title goes here"
+                maxLength={100}
+                className="w-full bg-transparent focus:outline-none text-3xl dark:text-gray-800"
+              />
+              <div className="line mt-1 text-sm text-gray-600 dark:text-gray-500 relative group">
+                <time dateTime={updatedDate.toISOString()}>{relativeTime}</time>
+                <span className="absolute hidden group-hover:block bg-gray-700 text-white text-xs p-1 rounded mt-1">
+                  {formattedTime}
+                </span>
               </div>
-
-              <div>
-                <label
-                  htmlFor="tags"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  Tags
-                </label>
-                <input
-                  id="tags"
-                  name="tags"
-                  type="text"
-                  value={tags}
-                  onChange={(e) => setTags(e.target.value)}
-                  placeholder="Enter comma-separated tags"
-                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 shadow-sm p-2"
-                />
-              </div>
+            </header>
+            <div className="mt-4">
+              <input
+                type="text"
+                name="tags"
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+                placeholder="Add tags, separated by commas"
+                className="w-full bg-transparent focus:outline-none text-sm dark:text-gray-800"
+              />
             </div>
-
-            <div className="space-y-4">
-              <button
-                type="submit"
-                className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
-              >
-                Update Card
-              </button>
+            <div className="flex justify-center mt-8">
               <button
                 type="button"
                 onClick={handleDelete}
-                className="w-full py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition flex items-center justify-center gap-2"
+                className="p-3 bg-gray-200 dark:bg-gray-700 rounded-full hover:bg-red-500 transition"
+                aria-label="Delete card"
               >
-                <Trash2 className="h-5 w-5" />
-                Delete Card
+                <Trash2 className="h-6 w-6 text-gray-700 dark:text-gray-200" />
               </button>
             </div>
           </div>
-        </form>
+        </div>
+        {isDeleting && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50">
+            <Loader2 className="h-12 w-12 text-white animate-spin" />
+            <p className="mt-4 text-white text-xl">Deleting...</p>
+          </div>
+        )}
       </motion.div>
     </div>
   );
