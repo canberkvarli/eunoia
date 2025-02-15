@@ -30,10 +30,6 @@ const Card: React.FC<CardProps> = ({ card }) => {
     >
       <Link href={`/cards/${card.id}`}>
         <div className="rounded-lg shadow pt-4 pb-4 pl-4 pr-[2px] text-white dark:text-[#A6B4C6] bg-[#FFFFFF] dark:bg-[#1D1F28] break-words cursor-pointer">
-          <h3 className="text-xl text-black dark:text-[#A6B4C6] font-bold mb-2">
-            {card.title}
-          </h3>
-
           <div
             className="relative"
             style={{
@@ -71,7 +67,7 @@ const Card: React.FC<CardProps> = ({ card }) => {
               {card.tags.map((tag, idx) => (
                 <span
                   key={idx}
-                  className="px-2 py-1 rounded text-black text-sm bg-gray-200 dark:bg-gray-600"
+                  className="px-2 py-1 rounded text-[#8A96A7] text-sm bg-gray-200 dark:bg-gray-600"
                 >
                   {tag}
                 </span>
@@ -80,6 +76,9 @@ const Card: React.FC<CardProps> = ({ card }) => {
           )}
         </div>
       </Link>
+      <h3 className="flex justify-center font-nunito text-sm mt-2 text-[#748297] dark:text-[#545F6F] mb-2 whitespace-nowrap overflow-hidden text-ellipsis">
+        {card.title}
+      </h3>
     </motion.div>
   );
 };
