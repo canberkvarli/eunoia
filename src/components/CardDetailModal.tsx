@@ -43,21 +43,18 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black opacity-50"
         onClick={() => router.back()}
       />
 
-      {/* Modal container with Framer Motion animation */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        transition={{ duration: 0.3 }}
+        transition={{ duration: 0.5 }}
         className="relative bg-white dark:bg-gray-800 rounded-lg shadow-lg w-[95%] h-[95%] overflow-hidden font-sans"
       >
-        {/* Close button */}
         <button
           className="absolute top-2 right-2 z-50 p-1"
           onClick={() => router.back()}
