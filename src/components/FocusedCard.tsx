@@ -32,7 +32,20 @@ const FocusedCardModal: React.FC<FocusedCardModalProps> = ({
   onClose,
 }) => {
   const formRef = useRef<HTMLFormElement>(null);
-  const titleRef = useRef<HTMLInputElement>(null);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    await createCard(formData);
+    onClose();
+  };
+
+  const handleFormKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+      e.preventDefault();
+      formRef.current?.requestSubmit();
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -45,7 +58,8 @@ const FocusedCardModal: React.FC<FocusedCardModalProps> = ({
       >
         <form
           ref={formRef}
-          action={createCard}
+          onSubmit={handleSubmit}
+          onKeyDown={handleFormKeyDown}
           className="relative w-full h-full flex flex-col bg-transparent"
         >
           <input type="hidden" name="userId" value={userId} />
@@ -63,7 +77,6 @@ const FocusedCardModal: React.FC<FocusedCardModalProps> = ({
           <div className="max-w-4xl mx-auto flex-1 flex flex-col justify-center">
             <div className="px-4 mb-4">
               <input
-                ref={titleRef}
                 type="text"
                 name="title"
                 placeholder="Type your headline here."
