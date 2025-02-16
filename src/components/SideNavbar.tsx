@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { ModeToggle } from "@/components/ModeToggle";
-import { Bell, LayoutGrid, LogOut } from "lucide-react";
+import { LayoutGrid, LogOut } from "lucide-react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 
@@ -23,12 +23,6 @@ const SideNavbar: React.FC = () => {
       </div>
       <div className="flex flex-col space-y-6">
         <ModeToggle />
-        <button
-          className="w-8 h-8 flex items-center justify-center text-gray-800 dark:text-[#748397] hover:text-blue-500"
-          aria-label="News"
-        >
-          <Bell className="w-5 h-5" />
-        </button>
         <button
           className="w-8 h-8 flex items-center justify-center text-gray-800 dark:text-[#748397] hover:text-blue-500"
           aria-label="Grid layout"
