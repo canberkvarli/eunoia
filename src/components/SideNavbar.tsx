@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import { ModeToggle } from "@/components/ModeToggle";
-import { Bell, LayoutGrid, Settings } from "lucide-react";
+import { Bell, LayoutGrid, LogOut } from "lucide-react";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 
 const SideNavbar: React.FC = () => {
   const [mounted, setMounted] = useState(false);
@@ -35,10 +36,11 @@ const SideNavbar: React.FC = () => {
           <LayoutGrid className="w-5 h-5" />
         </button>
         <button
+          onClick={() => signOut({ callbackUrl: "/" })}
           className="w-8 h-8 flex items-center justify-center text-gray-800 dark:text-[#748397] hover:text-blue-500"
-          aria-label="Settings"
+          aria-label="Log out"
         >
-          <Settings className="w-5 h-5" />
+          <LogOut className="w-5 h-5" />
         </button>
       </div>
     </aside>
