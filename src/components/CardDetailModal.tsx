@@ -104,7 +104,7 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
-        className="relative bg-white dark:bg-[#0A0C0F] rounded-lg shadow-lg w-[95%] h-[95%] overflow-hidden font-sans"
+        className="relative bg-white rounded-xl dark:bg-[#0A0C0F] rounded-lg shadow-lg w-[95%] h-[95%] overflow-hidden font-sans"
       >
         <div className="flex h-full">
           <div className="w-3/4 p-4 flex items-center justify-center">
@@ -121,7 +121,7 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
               style={{ overflow: "hidden" }}
             />
           </div>
-          <div className="w-1/4 bg-[#F0F2F5] dark:bg-[#505154] p-4 rounded-lg flex flex-col justify-between">
+          <div className="w-1/4 bg-[#F0F2F5] dark:bg-[#505154] p-4 rounded-lg flex flex-col justify-between rounded-xl">
             <header>
               <input
                 type="text"
