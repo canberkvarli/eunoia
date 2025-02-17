@@ -41,6 +41,10 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  const initialTitle = useRef(card.title || "");
+  const initialBody = useRef(card.body);
+  const initialTags = useRef(card.tags.join(", "));
+
   const autoResize = () => {
     const ta = textareaRef.current;
     if (ta) {
@@ -55,6 +59,13 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
   }, []);
 
   useEffect(() => {
+    if (
+      title === initialTitle.current &&
+      body === initialBody.current &&
+      tags === initialTags.current
+    ) {
+      return;
+    }
     const saveChanges = async () => {
       try {
         const formData = new FormData();
@@ -92,7 +103,6 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop: clicking outside closes the modal */}
       <div
         className="absolute inset-0 bg-black opacity-50"
         onClick={() => {
@@ -104,7 +114,7 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
-        className="relative bg-white rounded-xl dark:bg-[#0A0C0F] rounded-lg shadow-lg w-[95%] h-[95%] overflow-hidden font-sans"
+        className="relative bg-white dark:bg-[#0A0C0F] rounded-xl shadow-lg w-[95%] h-[95%] overflow-hidden font-sans"
       >
         <div className="flex h-full">
           <div className="w-3/4 p-4 flex items-center justify-center">
@@ -121,7 +131,7 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
               style={{ overflow: "hidden" }}
             />
           </div>
-          <div className="w-1/4 bg-[#F0F2F5] dark:bg-[#505154] p-4 rounded-lg flex flex-col justify-between rounded-xl">
+          <div className="w-1/4 bg-[#F0F2F5] dark:bg-[#505154] p-4 rounded-xl flex flex-col justify-between">
             <header>
               <input
                 type="text"
@@ -130,7 +140,7 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Title goes here"
                 maxLength={100}
-                className="w-full bg-transparent focus:outline-none text-3xl dark:text-[#A6B4C6]"
+                className="w-full bg-transparent focus:outline-none text-4xl dark:text-[#A6B4C6]"
               />
               <div className="line mt-1 text-sm text-gray-600 dark:text-[#A6B4C6] relative group">
                 <time dateTime={updatedDate.toISOString()}>{relativeTime}</time>
@@ -159,7 +169,7 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
                 >
                   <Trash2 className="h-6 w-6 text-gray-700 dark:text-[#A6B4C6]" />
                 </button>
-                <span className="absolute w-20 bottom-full left-1/2 -translate-x-1/2 mb-2 bg-gray-800 text-white text-xs p-1 rounded opacity-0 group-hover:opacity-100 transition pl-2">
+                <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs p-1 rounded opacity-0 group-hover:opacity-100 transition">
                   Delete card
                 </span>
               </div>
