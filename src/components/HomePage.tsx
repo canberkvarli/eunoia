@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
-import { Button } from "@/components/ui/button";
 import { SessionProvider } from "next-auth/react";
 import type { Session } from "next-auth";
 
@@ -70,9 +69,12 @@ export default function HomePage({ session }: HomePageProps) {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            <Button className="px-6 py-3 text-lg font-semibold text-white bg-deepRed rounded-full shadow-md hover:bg-opacity-80 transition">
+            <Link
+              href="/entering-my-mind?mode=signup"
+              className="px-6 py-3 text-lg font-semibold text-white bg-deepRed rounded-full shadow-md hover:bg-opacity-80 transition"
+            >
               Try it out
-            </Button>
+            </Link>
           </motion.div>
         </section>
       </div>
