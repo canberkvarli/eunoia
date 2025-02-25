@@ -6,6 +6,7 @@ export default async function CardDetailPage({
   params,
 }: {
   params: { cardId: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const { cardId } = params;
   const card = await getCard({ cardId });
