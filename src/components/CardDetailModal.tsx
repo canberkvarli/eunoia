@@ -2,17 +2,19 @@
 
 import { useState, useRef, useEffect, ChangeEvent } from "react";
 import { Trash2, Loader2 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { updateCard, deleteCard } from "@/actions/cardActions";
 import { useRouter } from "next/navigation";
+import TagCloud from "@/components/TagCloud";
 
 export interface Card {
   id: string;
   title?: string | null;
   body: string;
-  tags: string[];
+  tags: { id: string; name: string }[];
   createdAt: Date;
   updatedAt?: Date;
+  userId: string;
 }
 
 interface CardDetailModalProps {
@@ -33,17 +35,24 @@ function getRelativeTime(date: Date): string {
   return rtf.format(Math.round(days), "day");
 }
 
+const popupVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
+};
+
 const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
   const router = useRouter();
   const [title, setTitle] = useState(card.title || "");
   const [body, setBody] = useState(card.body);
-  const [tags, setTags] = useState(card.tags.join(", "));
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const initialTitle = useRef(card.title || "");
-  const initialBody = useRef(card.body);
-  const initialTags = useRef(card.tags.join(", "));
+  // Refs for initial values to avoid autosave on mount
+  const initialTitleRef = useRef(title);
+  const initialBodyRef = useRef(body);
+  const didMountRef = useRef(false);
+  const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const autoResize = () => {
     const ta = textareaRef.current;
@@ -59,21 +68,22 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
   }, []);
 
   useEffect(() => {
-    if (
-      title === initialTitle.current &&
-      body === initialBody.current &&
-      tags === initialTags.current
-    ) {
+    if (!didMountRef.current) {
+      didMountRef.current = true;
       return;
     }
+    if (title === initialTitleRef.current && body === initialBodyRef.current)
+      return;
     const saveChanges = async () => {
       try {
         const formData = new FormData();
         formData.set("cardId", card.id);
         formData.set("title", title);
         formData.set("body", body);
-        formData.set("tags", tags);
         await updateCard(formData);
+        setIsSaved(true);
+        if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+        saveTimerRef.current = setTimeout(() => setIsSaved(false), 3000);
         router.refresh();
       } catch (err) {
         console.error("Autosave error:", err);
@@ -81,7 +91,7 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
     };
     saveChanges();
     autoResize();
-  }, [title, body, tags]);
+  }, [title, body]);
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -116,6 +126,20 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
         transition={{ duration: 0.3 }}
         className="relative bg-white dark:bg-[#0A0C0F] rounded-xl shadow-lg w-[95%] h-[95%] overflow-hidden font-sans"
       >
+        <AnimatePresence>
+          {isSaved && (
+            <motion.div
+              className="absolute bottom-4 left-4 bg-[#FF5925] text-white px-4 py-2 rounded-md shadow-md"
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              variants={popupVariants}
+              transition={{ duration: 0.3 }}
+            >
+              Saved
+            </motion.div>
+          )}
+        </AnimatePresence>
         <div className="flex h-full">
           <div className="w-3/4 p-4 flex items-center justify-center">
             <textarea
@@ -131,7 +155,7 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
               style={{ overflow: "hidden" }}
             />
           </div>
-          <div className="w-1/4 bg-[#F0F2F5] dark:bg-[#505154] p-4 rounded-xl flex flex-col justify-between">
+          <div className="w-1/4 bg-[#F0F2F5] dark:bg-[#505154] p-4 rounded-xl flex flex-col justify-start">
             <header>
               <input
                 type="text"
@@ -140,7 +164,7 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Title goes here"
                 maxLength={100}
-                className="w-full bg-transparent focus:outline-none text-4xl dark:text-[#A6B4C6]"
+                className="w-full bg-transparent focus:outline-none text-3xl dark:text-[#A6B4C6]"
               />
               <div className="line mt-1 text-sm text-gray-600 dark:text-[#A6B4C6] relative group">
                 <time dateTime={updatedDate.toISOString()}>{relativeTime}</time>
@@ -150,14 +174,7 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
               </div>
             </header>
             <div className="mt-4">
-              <input
-                type="text"
-                name="tags"
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
-                placeholder="Add tags, separated by commas"
-                className="w-full bg-transparent focus:outline-none text-sm dark:text-[#A6B4C6]"
-              />
+              <TagCloud cardId={card.id} tags={card.tags} recentTags={[]} />
             </div>
             <div className="flex justify-center mt-8">
               <div className="relative group">

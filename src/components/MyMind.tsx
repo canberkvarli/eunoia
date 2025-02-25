@@ -2,32 +2,24 @@
 
 import { useState, useEffect } from "react";
 import SearchMyMind from "@/components/SearchMyMind";
-
-export interface Card {
-  id: string;
-  title?: string | null;
-  body: string;
-  tags: string[];
-  createdAt: Date;
-}
-
+import { Card as CardType } from "@/components/Card";
 import CardsContainer from "@/components/CardsContainer";
 import { searchCards } from "@/actions/searchActions";
 
 interface MyMindProps {
   userId: string;
-  initialCards: Card[];
+  initialCards: CardType[];
 }
 
 const MyMind: React.FC<MyMindProps> = ({ userId, initialCards }) => {
   const [query, setQuery] = useState("");
-  const [cards, setCards] = useState<Card[]>(initialCards);
+  const [cards, setCards] = useState<CardType[]>(initialCards);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       if (query.trim() !== "") {
         searchCards(userId, query).then((results) => {
-          setCards(results || []);
+          setCards(results?.map(card => ({ ...card, tags: [] })) || []);
         });
       } else {
         setCards(initialCards);

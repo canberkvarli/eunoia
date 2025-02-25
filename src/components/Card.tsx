@@ -2,17 +2,17 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Card as CardType } from "./MyMind";
-
-interface CardProps {
-  card: CardType;
+export interface Card {
+  id: string;
+  title?: string | null;
+  body: string;
+  tags: { id: string; name: string }[];
+  createdAt: Date;
 }
 
-const Card: React.FC<CardProps> = ({ card }) => {
-  // Determine if content is "too much" based on a threshold (e.g., 300 characters).
+const Card: React.FC<{ card: Card }> = ({ card }) => {
   const isContentTooMuch = card.body.length > 300;
 
-  // Adjust the font size based on the length of the card body.
   const getFontSize = (text: string): string => {
     if (text.length > 600) return "0.7rem";
     if (text.length > 300) return "0.9rem";
@@ -69,7 +69,7 @@ const Card: React.FC<CardProps> = ({ card }) => {
                   key={idx}
                   className="px-2 py-1 rounded text-[#8A96A7] text-sm bg-gray-200 dark:bg-gray-600"
                 >
-                  {tag}
+                  {tag.name}
                 </span>
               ))}
             </div>

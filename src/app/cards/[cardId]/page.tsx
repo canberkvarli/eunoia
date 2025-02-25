@@ -2,12 +2,15 @@ import { getCard } from "@/actions/cardActions";
 import { notFound } from "next/navigation";
 import CardDetailModal from "@/components/CardDetailModal";
 
-interface PageProps {
-  params: { cardId: string; userId: string };
-}
-
-export default async function CardDetailPage({ params }: PageProps) {
-  const card = await getCard({ cardId: params.cardId, userId: params.userId });
+export default async function CardDetailPage({
+  params,
+}: {
+  params: { cardId: string };
+}) {
+  const { cardId } = await params;
+  const card = await getCard({
+    cardId,
+  });
   if (!card) {
     notFound();
   }
