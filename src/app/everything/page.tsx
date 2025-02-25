@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { AuthOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 import { redirect } from "next/navigation";
 import MainNavBar from "@/components/MainNavBar";
 import SideNavbar from "@/components/SideNavbar";
@@ -10,7 +10,7 @@ import { getAllCards } from "@/actions/cardActions";
 import MyMind from "@/components/MyMind";
 
 export default async function EverythingPage() {
-  const session = await getServerSession(AuthOptions);
+  const session = await getServerSession(authOptions);
   if (!session) {
     redirect("/");
   }
