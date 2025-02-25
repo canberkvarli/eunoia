@@ -19,7 +19,7 @@ const MyMind: React.FC<MyMindProps> = ({ userId, initialCards }) => {
     const timer = setTimeout(() => {
       if (query.trim() !== "") {
         searchCards(userId, query).then((results) => {
-          setCards(results?.map(card => ({ ...card, tags: [] })) || []);
+          setCards(results?.map((card) => ({ ...card, tags: [] })) || []);
         });
       } else {
         setCards(initialCards);

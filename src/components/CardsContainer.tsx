@@ -3,7 +3,7 @@
 import React from "react";
 import NewCard from "@/components/NewCard";
 import Card from "@/components/Card";
-import { Card as CardType } from "./MyMind";
+import { Card as CardType } from "@/components/Card";
 import { AnimatePresence } from "framer-motion";
 
 interface CardsContainerProps {
