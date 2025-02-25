@@ -4,15 +4,14 @@ import CardDetailModal from "@/components/CardDetailModal";
 
 export default async function CardDetailPage({
   params,
-  searchParams,
 }: {
-  params: Promise<{ cardId: string }>;
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: { cardId: string };
 }) {
-  const { cardId } = await params;
+  const { cardId } = params;
   const card = await getCard({ cardId });
   if (!card) {
     notFound();
   }
+
   return <CardDetailModal card={card} />;
 }
