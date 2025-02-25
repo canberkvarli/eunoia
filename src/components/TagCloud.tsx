@@ -24,15 +24,40 @@ const TagCloud: React.FC<TagCloudProps> = ({
   recentTags = [],
   onChange,
 }) => {
+  const [tags, setTags] = useState<{ id: string; name: string }[]>(initialTags);
   const [inputValue, setInputValue] = useState("");
   const [showInput, setShowInput] = useState(false);
+
+  const handleCreateTag = async () => {
+    const trimmed = inputValue.trim();
+    if (!trimmed || tags.some((tag) => tag.name === trimmed)) return;
+    try {
+      const formData = new FormData();
+      formData.set("cardId", cardId);
+      formData.set("name", trimmed);
+      const newTag = await createTag(formData);
+      const updatedTags = [...tags, newTag];
+      setTags(updatedTags);
+      if (onChange) onChange(updatedTags);
+      setInputValue("");
+      setShowInput(false);
+    } catch (error) {
+      console.error(error);
+    } finally {
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    await handleCreateTag();
+  };
 
   const handleRemoveTag = async (tagId: string) => {
     try {
       await deleteTag(tagId, cardId);
-      if (onChange) {
-        onChange(initialTags.filter((tag) => tag.id !== tagId));
-      }
+      const updatedTags = tags.filter((tag) => tag.id !== tagId);
+      setTags(updatedTags);
+      if (onChange) onChange(updatedTags);
     } catch (error) {
       console.error(error);
     }
@@ -55,7 +80,7 @@ const TagCloud: React.FC<TagCloudProps> = ({
       <AnimatePresence>
         {showInput && (
           <motion.form
-            action={createTag}
+            onSubmit={handleSubmit}
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -78,13 +103,14 @@ const TagCloud: React.FC<TagCloudProps> = ({
                 type="submit"
                 className="p-2 bg-[#FF5925] text-white rounded"
               >
-                <div className="text-md px-1">+</div>
+                +
               </button>
             </div>
           </motion.form>
         )}
       </AnimatePresence>
 
+      {/* Recent tags block (optional) */}
       {recentTags.length > 0 && (
         <div className="mymind-recent-tag-block mb-4">
           <label className="text-xs text-gray-500">Last used:</label>
@@ -101,9 +127,10 @@ const TagCloud: React.FC<TagCloudProps> = ({
         </div>
       )}
 
+      {/* Tag cloud (guts) */}
       <div className="guts expanded flex flex-wrap gap-2">
         <AnimatePresence>
-          {initialTags.map((tag) => (
+          {tags.map((tag) => (
             <motion.div
               key={tag.id}
               variants={tagVariants}
@@ -113,7 +140,7 @@ const TagCloud: React.FC<TagCloudProps> = ({
               transition={{ duration: 0.2 }}
               className="relative mymind-tag manual flex items-center bg-blue-100 px-2 py-1 rounded group"
             >
-              <span className="value">{`#${tag.name}`}</span>
+              <span className="value">{tag.name}</span>
               <motion.div className="absolute top-0 right-0 transform -translate-y-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 transition">
                 <X
                   className="h-4 w-4 cursor-pointer"

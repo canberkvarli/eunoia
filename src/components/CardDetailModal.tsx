@@ -11,6 +11,7 @@ export interface Card {
   id: string;
   title?: string | null;
   body: string;
+  // Related tags fetched with include
   tags: { id: string; name: string }[];
   createdAt: Date;
   updatedAt?: Date;
@@ -44,11 +45,13 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
   const router = useRouter();
   const [title, setTitle] = useState(card.title || "");
   const [body, setBody] = useState(card.body);
+  // Local state for tags from the card
+  const [tagRel, setTagRel] = useState<{ id: string; name: string }[]>(card.tags);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Refs for initial values to avoid autosave on mount
+  // Refs for initial values to skip autosave on mount.
   const initialTitleRef = useRef(title);
   const initialBodyRef = useRef(body);
   const didMountRef = useRef(false);
@@ -67,6 +70,7 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
     autoResize();
   }, []);
 
+  // Autosave title and body only when changed (and not on initial mount)
   useEffect(() => {
     if (!didMountRef.current) {
       didMountRef.current = true;
@@ -80,6 +84,7 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
         formData.set("cardId", card.id);
         formData.set("title", title);
         formData.set("body", body);
+        // Note: Tags are managed separately via TagCloud.
         await updateCard(formData);
         setIsSaved(true);
         if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
@@ -93,12 +98,29 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
     autoResize();
   }, [title, body]);
 
+  // This function is called when the tag list changes (from TagCloud).
+  // It calls updateCard (with the current title and body) to update the card's updatedAt timestamp.
+  const handleTagChange = async (newTags: { id: string; name: string }[]) => {
+    setTagRel(newTags);
+    try {
+      const formData = new FormData();
+      formData.set("cardId", card.id);
+      formData.set("title", title);
+      formData.set("body", body);
+      await updateCard(formData);
+      setIsSaved(true);
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = setTimeout(() => setIsSaved(false), 3000);
+      router.refresh();
+    } catch (err) {
+      console.error("Tag update error:", err);
+    }
+  };
+
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
       await deleteCard(card.id);
-      router.refresh();
-      router.back();
     } catch (err) {
       console.error("Delete error:", err);
       setIsDeleting(false);
@@ -113,6 +135,7 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black opacity-50"
         onClick={() => {
@@ -126,6 +149,7 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
         transition={{ duration: 0.3 }}
         className="relative bg-white dark:bg-[#0A0C0F] rounded-xl shadow-lg w-[95%] h-[95%] overflow-hidden font-sans"
       >
+        {/* "Saved" popup */}
         <AnimatePresence>
           {isSaved && (
             <motion.div
@@ -141,6 +165,7 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
           )}
         </AnimatePresence>
         <div className="flex h-full">
+          {/* Left container: Editable Body */}
           <div className="w-3/4 p-4 flex items-center justify-center">
             <textarea
               ref={textareaRef}
@@ -155,7 +180,8 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
               style={{ overflow: "hidden" }}
             />
           </div>
-          <div className="w-1/4 bg-[#F0F2F5] dark:bg-[#505154] p-4 rounded-xl flex flex-col justify-start">
+          {/* Right container: Title, TagCloud, and Delete Button */}
+          <div className="w-1/4 bg-[#F0F2F5] dark:bg-[#505154] p-4 rounded-xl flex flex-col justify-between">
             <header>
               <input
                 type="text"
@@ -173,8 +199,14 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
                 </span>
               </div>
             </header>
+            {/* Tag section positioned just below the title */}
             <div className="mt-4">
-              <TagCloud cardId={card.id} tags={card.tags} recentTags={[]} />
+              <TagCloud
+                cardId={card.id}
+                tags={tagRel}
+                recentTags={[]}
+                onChange={handleTagChange}
+              />
             </div>
             <div className="flex justify-center mt-8">
               <div className="relative group">
