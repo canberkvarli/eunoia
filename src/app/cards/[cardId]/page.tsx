@@ -2,12 +2,14 @@ import { getCard } from "@/actions/cardActions";
 import { notFound } from "next/navigation";
 import CardDetailModal from "@/components/CardDetailModal";
 
-export default async function CardDetailPage(props: {
-  params: { cardId: string };
+export default async function CardDetailPage({
+  params,
+}: {
+  params: { cardId: string } | Promise<{ cardId: string }>;
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const { params } = props;
-  const { cardId } = params;
+  const resolvedParams = await Promise.resolve(params);
+  const { cardId } = resolvedParams;
   const card = await getCard({ cardId });
   if (!card) {
     notFound();
