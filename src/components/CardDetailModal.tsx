@@ -11,7 +11,6 @@ export interface Card {
   id: string;
   title?: string | null;
   body: string;
-  // Related tags fetched with include
   tags: { id: string; name: string }[];
   createdAt: Date;
   updatedAt?: Date;
@@ -45,13 +44,11 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
   const router = useRouter();
   const [title, setTitle] = useState(card.title || "");
   const [body, setBody] = useState(card.body);
-  // Local state for tags from the card
   const [tagRel, setTagRel] = useState<{ id: string; name: string }[]>(card.tags);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Refs for initial values to skip autosave on mount.
   const initialTitleRef = useRef(title);
   const initialBodyRef = useRef(body);
   const didMountRef = useRef(false);
@@ -70,21 +67,18 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
     autoResize();
   }, []);
 
-  // Autosave title and body only when changed (and not on initial mount)
   useEffect(() => {
     if (!didMountRef.current) {
       didMountRef.current = true;
       return;
     }
-    if (title === initialTitleRef.current && body === initialBodyRef.current)
-      return;
+    if (title === initialTitleRef.current && body === initialBodyRef.current) return;
     const saveChanges = async () => {
       try {
         const formData = new FormData();
         formData.set("cardId", card.id);
         formData.set("title", title);
         formData.set("body", body);
-        // Note: Tags are managed separately via TagCloud.
         await updateCard(formData);
         setIsSaved(true);
         if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
@@ -98,8 +92,6 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
     autoResize();
   }, [title, body]);
 
-  // This function is called when the tag list changes (from TagCloud).
-  // It calls updateCard (with the current title and body) to update the card's updatedAt timestamp.
   const handleTagChange = async (newTags: { id: string; name: string }[]) => {
     setTagRel(newTags);
     try {
@@ -121,21 +113,20 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
     setIsDeleting(true);
     try {
       await deleteCard(card.id);
+      router.refresh();
+      router.back();
     } catch (err) {
       console.error("Delete error:", err);
       setIsDeleting(false);
     }
   };
 
-  const updatedDate = card.updatedAt
-    ? new Date(card.updatedAt)
-    : new Date(card.createdAt);
+  const updatedDate = card.updatedAt ? new Date(card.updatedAt) : new Date(card.createdAt);
   const relativeTime = getRelativeTime(updatedDate);
   const formattedTime = updatedDate.toLocaleString();
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black opacity-50"
         onClick={() => {
@@ -149,7 +140,6 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
         transition={{ duration: 0.3 }}
         className="relative bg-white dark:bg-[#0A0C0F] rounded-xl shadow-lg w-[95%] h-[95%] overflow-hidden font-sans"
       >
-        {/* "Saved" popup */}
         <AnimatePresence>
           {isSaved && (
             <motion.div
@@ -165,23 +155,19 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
           )}
         </AnimatePresence>
         <div className="flex h-full">
-          {/* Left container: Editable Body */}
           <div className="w-3/4 p-4 flex items-center justify-center">
             <textarea
               ref={textareaRef}
               name="body"
               value={body}
-              onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-                setBody(e.target.value)
-              }
+              onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setBody(e.target.value)}
               placeholder="Start writing..."
               autoFocus
               className="w-full bg-transparent focus:outline-none resize-none text-left text-xl dark:text-[#A6B4C6] pl-5"
               style={{ overflow: "hidden" }}
             />
           </div>
-          {/* Right container: Title, TagCloud, and Delete Button */}
-          <div className="w-1/4 bg-[#F0F2F5] dark:bg-[#505154] p-4 rounded-xl flex flex-col justify-between">
+          <div className="w-1/4 bg-[#F0F2F5] dark:bg-[#505154] p-4 rounded-xl flex flex-col justify-start">
             <header>
               <input
                 type="text"
@@ -199,7 +185,6 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
                 </span>
               </div>
             </header>
-            {/* Tag section positioned just below the title */}
             <div className="mt-4">
               <TagCloud
                 cardId={card.id}
@@ -208,7 +193,7 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
                 onChange={handleTagChange}
               />
             </div>
-            <div className="flex justify-center mt-8">
+            <div className="mt-auto flex justify-center">
               <div className="relative group">
                 <button
                   type="button"
@@ -218,7 +203,7 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
                 >
                   <Trash2 className="h-6 w-6 text-gray-700 dark:text-[#A6B4C6]" />
                 </button>
-                <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs p-1 rounded opacity-0 group-hover:opacity-100 transition">
+                <span className="absolute w-[6rem] -top-9 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs p-2 px-3 rounded opacity-0 group-hover:opacity-100 transition">
                   Delete card
                 </span>
               </div>
