@@ -9,7 +9,7 @@ export async function searchCards(userId: string, query: string) {
       OR: [
         { title: { contains: query, mode: "insensitive" } },
         { body: { contains: query, mode: "insensitive" } },
-        { tags: { has: query } },
+        { tags: { some: { name: { contains: query, mode: "insensitive" } } } },
       ],
     },
     orderBy: {

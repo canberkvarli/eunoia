@@ -44,7 +44,9 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
   const router = useRouter();
   const [title, setTitle] = useState(card.title || "");
   const [body, setBody] = useState(card.body);
-  const [tagRel, setTagRel] = useState<{ id: string; name: string }[]>(card.tags);
+  const [tagRel, setTagRel] = useState<{ id: string; name: string }[]>(
+    card.tags
+  );
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -72,7 +74,8 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
       didMountRef.current = true;
       return;
     }
-    if (title === initialTitleRef.current && body === initialBodyRef.current) return;
+    if (title === initialTitleRef.current && body === initialBodyRef.current)
+      return;
     const saveChanges = async () => {
       try {
         const formData = new FormData();
@@ -121,12 +124,14 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
     }
   };
 
-  const updatedDate = card.updatedAt ? new Date(card.updatedAt) : new Date(card.createdAt);
+  const updatedDate = card.updatedAt
+    ? new Date(card.updatedAt)
+    : new Date(card.createdAt);
   const relativeTime = getRelativeTime(updatedDate);
   const formattedTime = updatedDate.toLocaleString();
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center dark:bg-[#0A0C0F]">
       <div
         className="absolute inset-0 bg-black opacity-50"
         onClick={() => {
@@ -160,14 +165,16 @@ const CardDetailModal: React.FC<CardDetailModalProps> = ({ card }) => {
               ref={textareaRef}
               name="body"
               value={body}
-              onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setBody(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+                setBody(e.target.value)
+              }
               placeholder="Start writing..."
               autoFocus
               className="w-full bg-transparent focus:outline-none resize-none text-left text-xl dark:text-[#A6B4C6] pl-5"
               style={{ overflow: "hidden" }}
             />
           </div>
-          <div className="w-1/4 bg-[#F0F2F5] dark:bg-[#505154] p-4 rounded-xl flex flex-col justify-start">
+          <div className="w-1/4 bg-[#F0F2F5] dark:bg-[#14161E] p-4 rounded-xl flex flex-col justify-start">
             <header>
               <input
                 type="text"

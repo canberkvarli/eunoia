@@ -19,17 +19,18 @@ const MainNavBar: React.FC = () => {
           Everything
         </Link>
         <Link
-          href="/spaces"
+          href="#"
           className="text-gray-500 dark:text-[#748397] hover:underline"
         >
           Spaces
         </Link>
-        <button
+        <Link
+          href="#"
           className="text-gray-500 dark:text-[#748397] hover:underline"
           onClick={handleSerendipityClick}
         >
           Serendipity
-        </button>
+        </Link>
       </div>
     </nav>
   );

@@ -64,17 +64,11 @@ const TagCloud: React.FC<TagCloudProps> = ({
   };
 
   return (
-    <div className="mymind-tag-cloud p-4 rounded-lg shadow-lg mt-4">
+    <div className="p-4 rounded-lg shadow-lg mt-4">
       <div className="header flex items-center justify-between mb-4">
-        <label className="text-xs font-bold text-gray-700">MIND TAGS</label>
-        <button
-          onClick={() => setShowInput((prev) => !prev)}
-          className={`px-2 py-1 rounded transition ${
-            showInput ? "bg-[#FF5925] text-white" : "bg-gray-100 text-gray-800"
-          }`}
-        >
-          {showInput ? "Cancel" : "+ Add tag"}
-        </button>
+        <label className="text-xs font-bold text-gray-700 dark:text-[#A6B4C6]">
+          MIND TAGS
+        </label>
       </div>
 
       <AnimatePresence>
@@ -88,12 +82,13 @@ const TagCloud: React.FC<TagCloudProps> = ({
             className="mb-4"
           >
             <input type="hidden" name="cardId" value={cardId} />
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center">
               <input
-                className="input border rounded p-2 w-full"
+                className="input rounded p-2 w-full dark:bg-[#242631] dark:text-[#A6B4C6]"
                 autoComplete="off"
                 name="name"
                 maxLength={100}
+                autoFocus
                 required
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
@@ -101,7 +96,7 @@ const TagCloud: React.FC<TagCloudProps> = ({
               />
               <button
                 type="submit"
-                className="p-2 bg-[#FF5925] text-white rounded"
+                className="p-2 w-[3rem] bg-[#FF5925] text-white rounded text-2xl"
               >
                 +
               </button>
@@ -128,6 +123,14 @@ const TagCloud: React.FC<TagCloudProps> = ({
 
       <div className="guts expanded flex flex-wrap gap-2">
         <AnimatePresence>
+          <button
+            onClick={() => setShowInput((prev) => !prev)}
+            className={
+              "px-2 py-1 rounded-2xl transition bg-[#FF5925] text-white"
+            }
+          >
+            + Add Tag
+          </button>
           {tags.map((tag) => (
             <motion.div
               key={tag.id}
@@ -136,7 +139,7 @@ const TagCloud: React.FC<TagCloudProps> = ({
               animate="visible"
               exit="exit"
               transition={{ duration: 0.2 }}
-              className="relative mymind-tag manual flex items-center bg-blue-100 px-2 py-1 rounded group"
+              className="relative mymind-tag manual flex items-center bg-blue-100 px-2 py-1 rounded group rounded-2xl dark:bg-[#A6B4C6]"
             >
               <span className="value">{`#${tag.name}`}</span>
               <motion.div className="absolute top-0 right-0 transform -translate-y-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 transition">
