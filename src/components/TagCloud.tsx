@@ -110,7 +110,6 @@ const TagCloud: React.FC<TagCloudProps> = ({
         )}
       </AnimatePresence>
 
-      {/* Recent tags block (optional) */}
       {recentTags.length > 0 && (
         <div className="mymind-recent-tag-block mb-4">
           <label className="text-xs text-gray-500">Last used:</label>
@@ -127,7 +126,6 @@ const TagCloud: React.FC<TagCloudProps> = ({
         </div>
       )}
 
-      {/* Tag cloud (guts) */}
       <div className="guts expanded flex flex-wrap gap-2">
         <AnimatePresence>
           {tags.map((tag) => (
@@ -140,7 +138,7 @@ const TagCloud: React.FC<TagCloudProps> = ({
               transition={{ duration: 0.2 }}
               className="relative mymind-tag manual flex items-center bg-blue-100 px-2 py-1 rounded group"
             >
-              <span className="value">{tag.name}</span>
+              <span className="value">{`#${tag.name}`}</span>
               <motion.div className="absolute top-0 right-0 transform -translate-y-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 transition">
                 <X
                   className="h-4 w-4 cursor-pointer"
