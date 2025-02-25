@@ -1,10 +1,18 @@
 "use client";
 
-import { usePathname, useSearchParams } from "next/navigation";
-import { useSession } from "next-auth/react";
-import Link from "next/link";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuList,
+  NavigationMenuLink,
+} from "@/components/ui/navigation-menu";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
+import type { ClientSafeProvider } from "next-auth/react";
 
 const navItems = [
   { label: "What", color: "#ffcc00" },
@@ -13,22 +21,35 @@ const navItems = [
   { label: "What's New", color: "#66ff99" },
 ];
 
-export default function Navbar() {
-  const { data: session } = useSession();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+export default function Navbar({}: Record<string, ClientSafeProvider>) {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <header className="fixed top-5 left-0 w-full z-50 transition-all duration-500">
-      <motion.div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4 transition-all duration-500">
+      <motion.div
+        className={`max-w-7xl mx-auto flex items-center justify-between px-6 py-4 transition-all duration-500 ${
+          scrolled ? "opacity-0 scale-95" : "opacity-100 scale-100"
+        }`}
+      >
         <Logo size={100} />
         <NavLinks />
-        <AuthButtons
-          size="lg"
-          session={session}
-          pathname={pathname}
-          searchParams={searchParams}
-        />
+        <AuthButtons size="lg" />
+      </motion.div>
+
+      <motion.div
+        className={`fixed top-4 left-1/2 transform -translate-x-1/2 w-[900px] h-[60px] bg-white shadow-lg rounded-full flex items-center justify-between px-6 transition-all duration-500 ${
+          scrolled ? "opacity-100 scale-100" : "opacity-0 scale-95"
+        }`}
+      >
+        <Logo size={80} />
+        <NavLinks small />
+        <AuthButtons size="sm" />
       </motion.div>
     </header>
   );
@@ -36,7 +57,7 @@ export default function Navbar() {
 
 const Logo = ({ size }: { size: number }) => (
   <Image
-    src="/eunoia-logo.svg"
+    src="eunoia-logo.svg"
     alt="Eunoia Logo"
     width={size}
     height={size}
@@ -44,104 +65,134 @@ const Logo = ({ size }: { size: number }) => (
   />
 );
 
-const NavLinks = () => (
-  <nav>
-    <ul className="flex space-x-8">
+const NavLinks = ({ small = false }: { small?: boolean }) => (
+  <NavigationMenu>
+    <NavigationMenuList className={`flex ${small ? "space-x-6" : "space-x-8"}`}>
       {navItems.map((item, index) => (
-        <li key={index}>
+        <NavigationMenuItem key={index}>
           <motion.div
-            className="flex items-center space-x-1 text-xl font-medium cursor-pointer"
+            className="relative flex items-center space-x-1 text-xl font-medium cursor-pointer"
             whileHover={{ scale: 1.1 }}
+            onClick={() => console.log(`${item.label} clicked`)}
           >
             <motion.span
               className="w-2 h-2 rounded-full"
               style={{ backgroundColor: item.color }}
-              whileHover={{ scale: 1.5, boxShadow: `0 0 10px ${item.color}` }}
+              whileHover={{
+                scale: 1.5,
+                boxShadow: `0 0 10px ${item.color}`,
+              }}
             />
-            <Link href="#">{item.label}</Link>
+            <NavigationMenuLink>{item.label}</NavigationMenuLink>
           </motion.div>
-        </li>
+        </NavigationMenuItem>
       ))}
-    </ul>
-  </nav>
+    </NavigationMenuList>
+  </NavigationMenu>
 );
 
-interface AuthButtonsProps {
-  size: "lg" | "sm";
-  session: unknown;
-  pathname: string;
-  searchParams: URLSearchParams;
-}
+const AuthButtons = ({ size }: { size: "lg" | "sm" }) => {
+  const { data: session, status } = useSession();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-const AuthButtons = ({
-  size,
-  session,
-  pathname,
-  searchParams,
-}: AuthButtonsProps) => {
-  if (session) {
+  const [showButtons, setShowButtons] = useState(false);
+
+  useEffect(() => {
+    if (status !== "loading") {
+      const timer = setTimeout(() => {
+        setShowButtons(true);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [status]);
+
+  if (status === "loading" || !showButtons) {
     return (
-      <Link
-        href="/everything"
-        className={`bg-darkOrange text-white shadow-none text-lg ${
-          size === "lg"
-            ? "rounded-full px-6 py-3"
-            : "text-sm rounded-full px-3 hover:bg-gray-800"
-        }`}
-      >
-        My Mind
-      </Link>
+      <div
+        style={{
+          width: size === "lg" ? "150px" : "100px",
+          height: size === "lg" ? "50px" : "30px",
+        }}
+      />
     );
-  } else {
-    if (pathname === "/entering-my-mind") {
-      return searchParams.get("mode") === "login" ? (
-        <Link
-          href="/entering-my-mind?mode=signup"
-          className={`bg-darkOrange text-white shadow-none text-lg ${
-            size === "lg"
-              ? "rounded-full px-6 py-3"
-              : "text-sm rounded-full px-3 hover:bg-gray-800"
-          }`}
-        >
-          Sign up
-        </Link>
-      ) : (
-        <Link
-          href="/entering-my-mind?mode=login"
-          className={`shadow-none text-lg ${
-            size === "lg"
-              ? "rounded-full px-6 py-3"
-              : "text-lg rounded-full px-3"
-          }`}
-        >
-          Log in
-        </Link>
-      );
-    } else {
-      return (
-        <div className={`flex ${size === "lg" ? "space-x-4" : "space-x-3"}`}>
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      {session ? (
+        <div>
           <Link
-            href="/entering-my-mind?mode=login"
-            className={`shadow-none text-lg ${
-              size === "lg"
-                ? "rounded-full px-6 py-3"
-                : "text-lg rounded-full px-3"
-            }`}
-          >
-            Log in
-          </Link>
-          <Link
-            href="/entering-my-mind?mode=signup"
+            href="/everything"
             className={`bg-darkOrange text-white shadow-none text-lg ${
               size === "lg"
                 ? "rounded-full px-6 py-3"
-                : "text-md rounded-full px-3 hover:bg-gray-800"
+                : "text-sm rounded-full px-3 hover:bg-gray-800"
             }`}
           >
-            Sign up
+            My Mind
           </Link>
         </div>
-      );
-    }
-  }
+      ) : (
+        <>
+          {pathname === "/entering-my-mind" ? (
+            <div>
+              {searchParams.get("mode") === "login" ? (
+                <Link
+                  href="/entering-my-mind?mode=signup"
+                  className={`bg-darkOrange text-white shadow-none text-lg ${
+                    size === "lg"
+                      ? "rounded-full px-6 py-3"
+                      : "text-sm rounded-full px-3 hover:bg-gray-800"
+                  }`}
+                >
+                  Sign up
+                </Link>
+              ) : (
+                <Link
+                  href="/entering-my-mind?mode=login"
+                  className={`shadow-none text-lg ${
+                    size === "lg"
+                      ? "rounded-full px-6 py-3"
+                      : "text-lg rounded-full px-3"
+                  }`}
+                >
+                  Log in
+                </Link>
+              )}
+            </div>
+          ) : (
+            <div
+              className={`flex ${size === "lg" ? "space-x-4" : "space-x-3"}`}
+            >
+              <Link
+                href="/entering-my-mind?mode=login"
+                className={`shadow-none text-lg ${
+                  size === "lg"
+                    ? "rounded-full px-6 py-3"
+                    : "text-lg rounded-full px-3"
+                }`}
+              >
+                Log in
+              </Link>
+              <Link
+                href="/entering-my-mind?mode=signup"
+                className={`bg-darkOrange text-white shadow-none text-lg ${
+                  size === "lg"
+                    ? "rounded-full px-6 py-3"
+                    : "text-md rounded-full px-3 hover:bg-gray-800"
+                }`}
+              >
+                Sign up
+              </Link>
+            </div>
+          )}
+        </>
+      )}
+    </motion.div>
+  );
 };
