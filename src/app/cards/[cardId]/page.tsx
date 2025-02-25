@@ -7,10 +7,8 @@ export default async function CardDetailPage({
 }: {
   params: { cardId: string };
 }) {
-  const { cardId } = await params;
-  const card = await getCard({
-    cardId,
-  });
+  const { cardId } = params;
+  const card = await getCard({ cardId });
   if (!card) {
     notFound();
   }
