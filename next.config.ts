@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/entering-my-mind",
-        destination: "/auth",
+        destination: "/api/auth",
       },
     ];
   },
