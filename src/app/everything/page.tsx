@@ -1,4 +1,3 @@
-// In your EverythingPage (app/everything/page.tsx)
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { redirect } from "next/navigation";
@@ -23,7 +22,7 @@ interface DemoSession extends DefaultSession {
 export default async function EverythingPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: { demo: string };
 }) {
   let session = await getServerSession(authOptions);
 
