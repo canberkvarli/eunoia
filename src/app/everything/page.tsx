@@ -10,7 +10,6 @@ import { getAllCards } from "@/actions/cardActions";
 import MyMind from "@/components/MyMind";
 import { prisma } from "@/lib/prisma";
 import type { DefaultSession } from "next-auth";
-import type { ParsedUrlQuery } from "querystring";
 
 interface DemoSession extends DefaultSession {
   user: {
@@ -20,14 +19,10 @@ interface DemoSession extends DefaultSession {
   };
 }
 
-export default async function EverythingPage({
-  searchParams,
-}: {
-  searchParams: ParsedUrlQuery;
-}) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function EverythingPage({ searchParams }) {
   let session = await getServerSession(authOptions);
 
-  // Check for demo mode; note that searchParams.demo may be string|string[]
   if (!session && searchParams.demo === "true") {
     const demoUser = await prisma.user.findUnique({
       where: { email: "demo@example.com" },
@@ -47,7 +42,7 @@ export default async function EverythingPage({
     redirect("/");
   }
 
-  const userId = (session.user as { id: string }).id;
+  const userId = (session?.user as { id: string }).id;
   const cards = await getAllCards(userId);
 
   return (
