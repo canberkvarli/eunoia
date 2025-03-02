@@ -22,7 +22,7 @@ interface DemoSession extends DefaultSession {
 export default async function EverythingPage({
   searchParams,
 }: {
-  searchParams: { demo: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 }) {
   let session = await getServerSession(authOptions);
 
