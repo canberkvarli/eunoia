@@ -10,6 +10,19 @@ async function main() {
   const passwordHash2 = await bcrypt.hash("securepass", 10);
   const passwordHash3 = await bcrypt.hash("123456", 10);
 
+  await prisma.user.upsert({
+    where: { email: "demo@example.com" },
+    update: {
+      name: "Demo User",
+      password: "demo1234",
+    },
+    create: {
+      email: "demo@example.com",
+      name: "Demo User",
+      password: "demo1234",
+    },
+  });
+
   await prisma.user.createMany({
     data: [
       {
@@ -25,6 +38,7 @@ async function main() {
         password: passwordHash3,
       },
     ],
+    skipDuplicates: true,
   });
 
   console.log("✅ Database has been seeded!");

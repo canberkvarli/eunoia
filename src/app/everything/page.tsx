@@ -1,3 +1,4 @@
+// In your EverythingPage (app/everything/page.tsx)
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { redirect } from "next/navigation";
@@ -8,12 +9,43 @@ import { ThemeProvider } from "next-themes";
 import { ThemeWrapper } from "@/components/ThemeWrapper";
 import { getAllCards } from "@/actions/cardActions";
 import MyMind from "@/components/MyMind";
+import { prisma } from "@/lib/prisma";
+import type { DefaultSession } from "next-auth";
 
-export default async function EverythingPage() {
-  const session = await getServerSession(authOptions);
+interface DemoSession extends DefaultSession {
+  user: {
+    id: string;
+    name: string | null;
+    email: string | null;
+  };
+}
+
+export default async function EverythingPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+  let session = await getServerSession(authOptions);
+
+  if (!session && searchParams.demo === "true") {
+    const demoUser = await prisma.user.findUnique({
+      where: { email: "demo@example.com" },
+    });
+    if (demoUser) {
+      session = {
+        user: {
+          id: demoUser.id,
+          name: demoUser.name,
+          email: demoUser.email,
+        },
+      } as DemoSession;
+    }
+  }
+
   if (!session) {
     redirect("/");
   }
+
   const userId = (session?.user as { id: string }).id;
   const cards = await getAllCards(userId);
 

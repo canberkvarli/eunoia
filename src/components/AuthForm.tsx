@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { ClientSafeProvider, signIn } from "next-auth/react";
+import { Smile } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
@@ -24,6 +25,9 @@ export default function AuthForm({ providers, className }: AuthFormProps) {
       setIsLogin(true);
     }
   }, [searchParams]);
+
+  const baseStyles =
+    "w-80 flex items-center justify-center gap-2 rounded-3xl px-4 py-3 font-medium shadow-lg transition-colors";
 
   return (
     <div className={cn("flex flex-col gap-6 w-[20rem] mx-auto", className)}>
@@ -54,9 +58,6 @@ export default function AuthForm({ providers, className }: AuthFormProps) {
             const buttonText = isLogin
               ? `Sign in with ${provider.name}`
               : `Sign up with ${provider.name}`;
-
-            const baseStyles =
-              "w-80 flex items-center justify-center gap-2 rounded-3xl px-4 py-3 font-medium shadow-lg transition-colors";
 
             if (provider.id === "google") {
               return (
@@ -103,7 +104,20 @@ export default function AuthForm({ providers, className }: AuthFormProps) {
             }
             return null;
           })}
+
+        <button
+          onClick={() => {
+            window.location.href = "/everything?demo=true";
+          }}
+          className={`${baseStyles} bg-blue-500 text-white hover:bg-blue-600`}
+        >
+          <Smile size={24} />
+          <span>
+            {isLogin ? "Sign in as Demo User" : "Sign up as Demo User"}
+          </span>
+        </button>
       </div>
+
       <p className="text-gray-600 mt-2 text-center">
         {isLogin ? "Don't have an account? " : "Already have an account? "}
         <span
