@@ -19,11 +19,7 @@ interface DemoSession extends DefaultSession {
   };
 }
 
-export default async function EverythingPage({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
+export default async function EverythingPage({ searchParams }: { searchParams: { demo?: string } }) {
   let session = await getServerSession(authOptions);
 
   if (!session && searchParams.demo === "true") {
