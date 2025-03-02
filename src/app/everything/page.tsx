@@ -19,8 +19,11 @@ interface DemoSession extends DefaultSession {
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default async function EverythingPage({ searchParams }) {
+export default async function EverythingPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   let session = await getServerSession(authOptions);
 
   if (!session && searchParams.demo === "true") {
@@ -42,7 +45,7 @@ export default async function EverythingPage({ searchParams }) {
     redirect("/");
   }
 
-  const userId = (session?.user as { id: string }).id;
+  const userId = (session.user as { id: string }).id;
   const cards = await getAllCards(userId);
 
   return (
