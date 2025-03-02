@@ -36,5 +36,6 @@ export const authOptions = {
       }
       return session;
     },
+    debug: true,
   },
 };
