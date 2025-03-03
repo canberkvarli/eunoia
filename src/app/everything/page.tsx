@@ -8,27 +8,11 @@ import { ThemeProvider } from "next-themes";
 import { ThemeWrapper } from "@/components/ThemeWrapper";
 import { getAllCards } from "@/actions/cardActions";
 import MyMind from "@/components/MyMind";
-import { prisma } from "@/lib/prisma";
-import type { DefaultSession } from "next-auth";
 
-interface DemoSession extends DefaultSession {
-  user: {
-    id: string;
-    name: string | null;
-    email: string | null;
-  };
-}
-
-export default async function EverythingPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}): Promise<JSX.Element> {
-  const resolvedSearchParams = await searchParams;
-
+export default async function EverythingPage() {
   let session = await getServerSession(authOptions);
 
-  if (!session && resolvedSearchParams.demo === "true") {
+  if (!session && searchParams.demo === "true") {
     const demoUser = await prisma.user.findUnique({
       where: { email: "demo@example.com" },
     });
@@ -46,8 +30,7 @@ export default async function EverythingPage({
   if (!session) {
     redirect("/");
   }
-
-  const userId = (session.user as { id: string }).id;
+  const userId = (session?.user as { id: string }).id;
   const cards = await getAllCards(userId);
 
   return (
