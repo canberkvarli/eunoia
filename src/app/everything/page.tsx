@@ -19,11 +19,16 @@ interface DemoSession extends DefaultSession {
   };
 }
 
-export default async function EverythingPage(props): Promise<JSX.Element> {
-  const { searchParams } = props;
+export default async function EverythingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}): Promise<JSX.Element> {
+  const resolvedSearchParams = await searchParams;
+
   let session = await getServerSession(authOptions);
 
-  if (!session && searchParams.demo === "true") {
+  if (!session && resolvedSearchParams.demo === "true") {
     const demoUser = await prisma.user.findUnique({
       where: { email: "demo@example.com" },
     });
