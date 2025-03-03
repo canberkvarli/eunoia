@@ -8,12 +8,26 @@ import { ThemeProvider } from "next-themes";
 import { ThemeWrapper } from "@/components/ThemeWrapper";
 import { getAllCards } from "@/actions/cardActions";
 import MyMind from "@/components/MyMind";
+import { prisma } from "@/lib/prisma";
+import type { DefaultSession } from "next-auth";
+import type { ParsedUrlQuery } from "querystring";
+
+interface DemoSession extends DefaultSession {
+  user: {
+    id: string;
+    name: string | null;
+    email: string | null;
+  };
+}
+
+interface EverythingPageProps {
+  searchParams: Promise<ParsedUrlQuery>;
+}
 
 export default async function EverythingPage({
   searchParams,
-}: any): Promise<JSX.Element> {
+}: EverythingPageProps): Promise<JSX.Element> {
   const params = await searchParams;
-
   let session = await getServerSession(authOptions);
 
   if (!session && params.demo === "true") {
