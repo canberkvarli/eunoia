@@ -26,7 +26,7 @@ interface EverythingPageProps {
 
 export default async function EverythingPage({
   searchParams,
-}: EverythingPageProps): Promise<JSX.Element> {
+}: EverythingPageProps): Promise {
   const params = await searchParams;
   let session = await getServerSession(authOptions);
 
