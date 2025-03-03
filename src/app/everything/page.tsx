@@ -9,7 +9,11 @@ import { ThemeWrapper } from "@/components/ThemeWrapper";
 import { getAllCards } from "@/actions/cardActions";
 import MyMind from "@/components/MyMind";
 
-export default async function EverythingPage({ searchParams }) {
+export default async function EverythingPage({
+  searchParams,
+}: {
+  searchParams: unknown;
+}) {
   let session = await getServerSession(authOptions);
 
   if (!session && searchParams.demo === "true") {
