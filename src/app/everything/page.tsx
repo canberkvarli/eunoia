@@ -1,3 +1,4 @@
+import type { ReactElement } from "react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { redirect } from "next/navigation";
@@ -26,7 +27,7 @@ interface EverythingPageProps {
 
 export default async function EverythingPage({
   searchParams,
-}: EverythingPageProps): Promise {
+}: EverythingPageProps): Promise<ReactElement> {
   const params = await searchParams;
   let session = await getServerSession(authOptions);
 
