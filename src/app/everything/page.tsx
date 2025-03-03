@@ -19,9 +19,8 @@ interface DemoSession extends DefaultSession {
   };
 }
 
-export default async function EverythingPage({
-  searchParams,
-}: EverythingPageProps): Promise<JSX.Element> {
+export default async function EverythingPage(props): Promise<JSX.Element> {
+  const { searchParams } = props;
   let session = await getServerSession(authOptions);
 
   if (!session && searchParams.demo === "true") {
