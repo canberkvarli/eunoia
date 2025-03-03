@@ -11,12 +11,12 @@ import MyMind from "@/components/MyMind";
 
 export default async function EverythingPage({
   searchParams,
-}: {
-  searchParams: unknown;
-}) {
+}: any): Promise<JSX.Element> {
+  const params = await searchParams;
+
   let session = await getServerSession(authOptions);
 
-  if (!session && searchParams.demo === "true") {
+  if (!session && params.demo === "true") {
     const demoUser = await prisma.user.findUnique({
       where: { email: "demo@example.com" },
     });
@@ -34,7 +34,8 @@ export default async function EverythingPage({
   if (!session) {
     redirect("/");
   }
-  const userId = (session?.user as { id: string }).id;
+
+  const userId = (session.user as { id: string }).id;
   const cards = await getAllCards(userId);
 
   return (
