@@ -23,7 +23,7 @@ export default async function EverythingPage({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
-}) {
+}): Promise<JSX.Element> {
   let session = await getServerSession(authOptions);
 
   if (!session && searchParams.demo === "true") {
