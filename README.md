@@ -1,4 +1,4 @@
-# [Eunoia](eunoia-two.vercel.app) - MyMind Clone
+# [Eunoia](https://eunoia-two.vercel.app) - MyMind Clone
 
 
 ## 🚀 Overview
