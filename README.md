@@ -13,41 +13,19 @@ Eunoia is a **modern MyMind clone** built with the latest web technologies. It s
 - **Framer Motion** (for smooth animations)
 - **Prisma** (for database management)
 - **PostgreSQL** (or a modern alternative for persistence)
-- **GraphQL** (for flexible API queries)
 - **ShadeCDN** (for optimized asset loading)
 - **Vercel** (for seamless deployment)
-- **OpenAI API** (for AI-powered features)
+- **OpenAI API** (for AI-powered features) (Not yet implemented)
 
 ## ✨ Features
 
 - 🌟 **Minimal & Aesthetic UI** - Inspired by MyMind's clean interface
-- 🔍 **AI-powered search & organization**
+- 🔍 **AI-powered search & organization** (Not yet implemented)
 - 📂 **Save text, images, and links**
 - ⚡ **Super-fast performance with Next.js**
 - 🎨 **Framer Motion animations for a smooth experience**
-- 🔑 **Authentication with NextAuth** (Google & Email Sign-In)
+- 🔑 **Authentication with NextAuth** (Google & Github Sign-In)
 - 📈 **Scalable & Future-proof**
-
-## 📂 Project Structure
-
-```
-├── app
-│   ├── components // Reusable UI components
-│   ├── pages // Next.js app pages
-│   ├── api // API routes
-│   ├── styles // Tailwind + Global styles
-│   ├── prisma // Database schema
-│   ├── public // Static assets
-│   ├── hooks // Custom React hooks
-│   ├── utils // Helper functions
-│   ├── lib // External services (OpenAI, Auth, etc.)
-│   ├── types // TypeScript interfaces
-├── next.config.js // Next.js config
-├── tailwind.config.ts // Tailwind CSS setup
-├── package.json // Dependencies
-├── tsconfig.json // TypeScript config
-└── README.md // Project documentation
-```
 
 ## 🛠️ Installation & Setup
 
@@ -82,11 +60,9 @@ This project is designed to be deployed on **Vercel**. Just connect your GitHub 
 ## 📖 Roadmap
 
 - [ ] **User Authentication & Profiles**
-- [ ] **AI-Powered Tagging & Organization**
 - [ ] **Drag & Drop for Custom Organization**
 - [ ] **Dark Mode & Theming**
-- [ ] **Mobile Optimizations**
-- [ ] **More AI-powered features**
+- [ ] **AI-Powered Tagging & Organization**(Not yet implemented)
 
 ## 🤝 Contributing
 
